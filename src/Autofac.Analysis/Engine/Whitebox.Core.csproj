@@ -1,0 +1,119 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{66051587-0845-4A16-B5E9-608E94A7F53C}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Whitebox.Core</RootNamespace>
+    <AssemblyName>Whitebox.Core</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Autofac, Version=3.0.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Autofac.3.1.1\lib\net40\Autofac.dll</HintPath>
+    </Reference>
+    <Reference Include="Sprache, Version=1.10.0.35, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Sprache.1.10.0.35\lib\net40\Sprache.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Analytics\TrackedInRootScope\TrackedInstanceInRootScopeDetector.cs" />
+    <Compile Include="Analytics\Leaks\LastNActivationsScopeTracker.cs" />
+    <Compile Include="Analytics\Leaks\RootScopeLeakDetector.cs" />
+    <Compile Include="Analytics\LifetimeDisposalOrder\OutOfOrderDisposalDetector.cs" />
+    <Compile Include="Analytics\MessageEvent.cs" />
+    <Compile Include="Analytics\MessageRelevance.cs" />
+    <Compile Include="Analytics\PersistentLifetimes\PersistentLifetimeDetector.cs" />
+    <Compile Include="ApplicationConnectedEventArgs.cs" />
+    <Compile Include="ApplicationEventHandlers\ActionEventHandler.cs" />
+    <Compile Include="Application\ClockTickEvent.cs" />
+    <Compile Include="Application\Thread.cs" />
+    <Compile Include="Application\TypeData.cs" />
+    <Compile Include="Session\ActionEvent.cs" />
+    <Compile Include="Session\ActiveItemRepository.cs" />
+    <Compile Include="Application\Component.cs" />
+    <Compile Include="Application\IActiveItemRepository.cs" />
+    <Compile Include="Application\IApplicationItem.cs" />
+    <Compile Include="Application\InstanceLookup.cs" />
+    <Compile Include="Application\LifetimeScope.cs" />
+    <Compile Include="Application\ProfilerConnectedEvent.cs" />
+    <Compile Include="Application\RegistrationSource.cs" />
+    <Compile Include="Application\ResolveOperation.cs" />
+    <Compile Include="Application\IApplicationEventQueue.cs" />
+    <Compile Include="Application\Service.cs" />
+    <Compile Include="Connector\NamedPipesReadQueue.cs" />
+    <Compile Include="Constants.cs" />
+    <Compile Include="Application\IApplicationEventHandler.cs" />
+    <Compile Include="Application\ItemCompletedEvent.cs" />
+    <Compile Include="Application\ItemCreatedEvent.cs" />
+    <Compile Include="ApplicationDisconnectedEventArgs.cs" />
+    <Compile Include="Session\ApplicationEventDispatcher.cs" />
+    <Compile Include="Session\IApplicationEventDispatcher.cs" />
+    <Compile Include="Session\IApplicationEventBus.cs" />
+    <Compile Include="Updaters\ComponentAddedHandler.cs" />
+    <Compile Include="CoreModule.cs" />
+    <Compile Include="IProfilerSession.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RegistrationExtensions.cs" />
+    <Compile Include="Session\IMessageDispatcher.cs" />
+    <Compile Include="IUpdateHandler.cs" />
+    <Compile Include="Session\MessageDispatcher.cs" />
+    <Compile Include="Session\ProfilerSession.cs" />
+    <Compile Include="Updaters\InstanceLookupHandler.cs" />
+    <Compile Include="Updaters\ProfilerConnectedHandler.cs" />
+    <Compile Include="Updaters\LifetimeScopeHandler.cs" />
+    <Compile Include="Updaters\RegistrationSourceAddedHandler.cs" />
+    <Compile Include="Updaters\ResolveOperationHandler.cs" />
+    <Compile Include="Updaters\TypeDiscoveredHandler.cs" />
+    <Compile Include="Util\ConcurrentList.cs" />
+    <Compile Include="Util\GenericRegistrationSourceDescriptionFormatter.cs" />
+    <Compile Include="Application\MethodIdentifier.cs" />
+    <Compile Include="Application\TypeIdentifier.cs" />
+    <Compile Include="Util\TypeNameParser.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Whitebox\Whitebox.csproj">
+      <Project>{F4E62357-C778-4D33-8B8D-77C0E1BF4BB7}</Project>
+      <Name>Whitebox</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
