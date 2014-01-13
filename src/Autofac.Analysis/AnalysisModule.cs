@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
+using Autofac.Analysis.Display;
+using Autofac.Analysis.Engine;
 using Autofac.Analysis.Source;
 using Autofac.Analysis.Transport.Connector;
 using Autofac.Analysis.Transport.Messages;
@@ -9,20 +11,30 @@ using Autofac.Core.Resolving;
 
 namespace Autofac.Analysis
 {
-    public class AnalysisModule : Module, IStartable
+    public class AnalysisModule : Module, IStartable, IDisposable
     {
+        readonly ILifetimeScope _coreContainer, _sessionScope;
         readonly IWriteQueue _client;
         readonly ModelMapper _modelMapper = new ModelMapper();
 
-        public AnalysisModule(IWriteQueue client)
+        public AnalysisModule()
         {
-            if (client == null) throw new ArgumentNullException("client");
+            var client = new InProcQueue();
+            var coreBuilder = new ContainerBuilder();
+            coreBuilder.RegisterModule<CoreModule>();
+            coreBuilder.RegisterModule<DisplayModule>();
+            coreBuilder.RegisterInstance(client).As<IReadQueue>();
+            _coreContainer = coreBuilder.Build();
+            _sessionScope = _coreContainer.BeginLifetimeScope("profiler-session");
             _client = client;
+            var session = _sessionScope.Resolve<IProfilerSession>();
+            session.Start();
         }
 
-        public AnalysisModule()
-            : this (new NamedPipesWriteQueue())
+        public void Dispose()
         {
+            _sessionScope.Dispose();
+            _coreContainer.Dispose();
         }
 
         protected override void Load(ContainerBuilder builder)
@@ -30,6 +42,7 @@ namespace Autofac.Analysis
             base.Load(builder);
             builder.RegisterInstance(this)
                 .As<IStartable>()
+                .OwnedByLifetimeScope()
                 .OnActivated(e => e.Instance.Start(e.Context.Resolve<ILifetimeScope>()));
 
             var processInfo = Process.GetCurrentProcess();
@@ -91,7 +104,6 @@ namespace Autofac.Analysis
 
         void AttachToResolveOperation(IResolveOperation resolveOperation, LifetimeScopeModel lifetimeScope)
         {
-            
             var resolveOperationModel = _modelMapper.GetResolveOperationModel(resolveOperation, lifetimeScope, new StackTrace());
             Send(new ResolveOperationBeginningMessage(resolveOperationModel));
             resolveOperation.CurrentOperationEnding += (s, e) =>

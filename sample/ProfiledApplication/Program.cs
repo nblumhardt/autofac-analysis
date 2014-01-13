@@ -2,6 +2,7 @@
 using Autofac;
 using Autofac.Configuration;
 using Autofac.Features.OwnedInstances;
+using Serilog;
 
 namespace ProfiledApplication
 {
@@ -37,6 +38,8 @@ namespace ProfiledApplication
     {
         static void Main()
         {
+            Log.Logger = new LoggerConfiguration().WriteTo.ColoredConsole().CreateLogger();
+
             Console.WriteLine("Started.");
 
             var builder = new ContainerBuilder();
@@ -69,10 +72,10 @@ namespace ProfiledApplication
                     var ov = ls2.Resolve<Owned<C>>();
                     Console.WriteLine("Resolved an {0}", ov);
                 }
-            }
 
-            Console.WriteLine("Done. Press any key...");
-            Console.ReadKey(true);
+                Console.WriteLine("Done. Press any key...");
+                Console.ReadKey(true);
+            }
         }
     }
 }

@@ -102,7 +102,7 @@ namespace Autofac.Analysis.Engine.Util
 
         public static string FormatAssemblyQualifiedTypeName(TypeIdentifier typeIdentifier)
         {
-            throw new NotImplementedException();
+            return "";
         }
     }
 }

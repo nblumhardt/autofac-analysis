@@ -33,6 +33,14 @@
     <Reference Include="Autofac">
       <HintPath>..\..\packages\Autofac.3.3.0\lib\net40\Autofac.dll</HintPath>
     </Reference>
+    <Reference Include="Serilog, Version=1.2.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Serilog.1.2.7\lib\net45\Serilog.dll</HintPath>
+    </Reference>
+    <Reference Include="Serilog.FullNetFx, Version=1.2.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Serilog.1.2.7\lib\net45\Serilog.FullNetFx.dll</HintPath>
+    </Reference>
     <Reference Include="Sprache">
       <HintPath>..\..\packages\Sprache.1.10.0.35\lib\net40\Sprache.dll</HintPath>
     </Reference>
@@ -45,6 +53,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Display\EventWriter.cs" />
+    <Compile Include="Display\DisplayModule.cs" />
     <Compile Include="Engine\Analytics\Leaks\LastNActivationsScopeTracker.cs" />
     <Compile Include="Engine\Analytics\Leaks\RootScopeLeakDetector.cs" />
     <Compile Include="Engine\Analytics\LifetimeDisposalOrder\OutOfOrderDisposalDetector.cs" />
@@ -136,9 +146,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="Engine\Whitebox.Core.csproj" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
