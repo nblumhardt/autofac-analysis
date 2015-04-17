@@ -38,7 +38,7 @@ namespace ProfiledApplication
     {
         static void Main()
         {
-            Log.Logger = new LoggerConfiguration().WriteTo.ColoredConsole().CreateLogger();
+            Log.Logger = new LoggerConfiguration().WriteTo.LiterateConsole().CreateLogger();
 
             Console.WriteLine("Started.");
 
