@@ -1,9 +1,9 @@
 ﻿using System;
+using System.Linq;
 using Autofac.Analysis.Engine.Analytics;
 using Autofac.Analysis.Engine.Application;
 using Autofac.Analysis.Engine.Session;
 using Serilog;
-using Serilog.Events;
 
 namespace Autofac.Analysis.Display
 {
@@ -31,13 +31,7 @@ namespace Autofac.Analysis.Display
 
         public void Handle(MessageEvent applicationEvent)
         {
-            var level = LogEventLevel.Information;
-            if (applicationEvent.Relevance == MessageRelevance.Error)
-                level = LogEventLevel.Error;
-            else if (applicationEvent.Relevance == MessageRelevance.Warning)
-                level = LogEventLevel.Warning;
-
-            _logger.Write(level, "{Title}: {Message}", applicationEvent.Title, applicationEvent.Message);
+            _logger.Write(applicationEvent.Level, applicationEvent.MessageTemplate, applicationEvent.Args);
         }
 
         public void Dispose()
@@ -47,14 +41,76 @@ namespace Autofac.Analysis.Display
 
         public void Handle(ItemCreatedEvent<ResolveOperation> applicationEvent)
         {
-            _logger.Information("Resolve operation {ResolveOperationId} started", applicationEvent.Item.Id);
+            if (applicationEvent.Item.Parent != null)
+            {
+                _logger
+                    .ForContext("ResolveOperationId", applicationEvent.Item.Id)
+                    .ForContext("ParentResolveOperationId", applicationEvent.Item.Parent.Id)
+                    .Information("Resolve operation {ResolveOperationShortId} started as child of {ParentResolveOperationShortId}",
+                        IdDisplay.MakeShortId(applicationEvent.Item.Id), IdDisplay.MakeShortId(applicationEvent.Item.Parent.Id));
+            }
+            else
+            {
+                _logger
+                    .ForContext("ResolveOperationId", applicationEvent.Item.Id)
+                    .Information("Resolve operation {ResolveOperationShortId} started from {CallingMethod}", IdDisplay.MakeShortId(applicationEvent.Item.Id), applicationEvent.Item.CallingMethod.DisplayName);
+            }
         }
 
         public void Handle(ItemCompletedEvent<ResolveOperation> applicationEvent)
         {
             // There's a pile of data on the item here that needs to be meaninfully output (e.g. the
             // whole resolved object graph shape and what was created where).
-            _logger.Information("Resolve operation {ResolveOperationId} completed", applicationEvent.Item.Id);
+            //
+            var graph = ToObjectGraph(applicationEvent.Item.RootInstanceLookup);
+
+            _logger
+                .ForContext("ResolveOperationId", applicationEvent.Item.Id)
+                .Information("Resolve operation {ResolveOperationShortId} returned {@Graph}", IdDisplay.MakeShortId(applicationEvent.Item.Id), graph);
+        }
+
+        static object ToObjectGraph(InstanceLookup instanceLookup)
+        {
+            if (instanceLookup == null) throw new ArgumentNullException("instanceLookup");
+
+            // Just hacking things to keep clutter down, needs cleaning up
+
+            if (instanceLookup.SharedInstanceReused)
+            {
+                if (instanceLookup.DependencyLookups.Count == 0)
+                {
+                    return new
+                    {
+                        Component = instanceLookup.Component.LimitType.Identity.DisplayName,
+                        Reused = instanceLookup.SharedInstanceReused,
+                        Scope = instanceLookup.ActivationScope.Description
+                    };
+                }
+
+                return new
+                {
+                    Component = instanceLookup.Component.LimitType.Identity.DisplayName,
+                    Reused = instanceLookup.SharedInstanceReused,
+                    Scope = instanceLookup.ActivationScope.Description,
+                    Dependencies = instanceLookup.DependencyLookups.Select(ToObjectGraph).ToArray()
+                };
+            }
+
+            if (instanceLookup.DependencyLookups.Count == 0)
+            {
+                return new
+                {
+                    Component = instanceLookup.Component.LimitType.Identity.DisplayName,
+                    Scope = instanceLookup.ActivationScope.Description
+                };
+            }
+
+            return new
+            {
+                Component = instanceLookup.Component.LimitType.Identity.DisplayName,
+                Scope = instanceLookup.ActivationScope.Description,
+                Dependencies = instanceLookup.DependencyLookups.Select(ToObjectGraph).ToArray()
+            };
         }
     }
 }

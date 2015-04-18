@@ -55,7 +55,7 @@ namespace Autofac.Analysis.Engine.Util
         }
 
         static readonly Parser<int> Integer =
-            Parse.Digit.AtLeastOnce().Text().Select(i => int.Parse(i));
+            Parse.Digit.AtLeastOnce().Text().Select(int.Parse);
 
         static readonly Parser<char> Dot = Parse.Char('.');
 

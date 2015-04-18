@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Autofac.Analysis.Engine.Application;
+using Serilog.Events;
 
 namespace Autofac.Analysis.Engine.Analytics.TrackedInRootScope
 {
@@ -31,8 +32,7 @@ namespace Autofac.Analysis.Engine.Analytics.TrackedInRootScope
                 if (_warnedComponents.Contains(component))
                     return;
 
-                var message = string.Format("The disposable component {0} was activated in the root scope. This means the instance will be kept alive for the lifetime of the container.", component.Description);
-                var messageEvent = new MessageEvent(MessageRelevance.Warning, "Tracked Component in Root Scope", message);
+                var messageEvent = new MessageEvent(LogEventLevel.Warning, "The disposable component {ComponentId}, {ComponentDescription}, was activated in the root scope. This means the instance will be kept alive for the lifetime of the container.", component.Id, component.Description);
                 _applicationEventQueue.Enqueue(messageEvent);
             }
         }

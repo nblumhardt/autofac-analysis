@@ -1,35 +1,36 @@
 ﻿using System;
+using Serilog.Events;
 
 namespace Autofac.Analysis.Engine.Analytics
 {
     public class MessageEvent
     {
-        readonly MessageRelevance _relevance;
-        readonly string _title;
-        readonly string _message;
+        readonly LogEventLevel _level;
+        readonly string _messageTemplate;
+        readonly object[] _args;
 
-        public MessageEvent(MessageRelevance relevance, string title, string message)
+        public MessageEvent(LogEventLevel level, string messageTemplate, params object[] args)
         {
-            if (title == null) throw new ArgumentNullException("title");
-            if (message == null) throw new ArgumentNullException("message");
-            _relevance = relevance;
-            _title = title;
-            _message = message;
+            if (messageTemplate == null) throw new ArgumentNullException("messageTemplate");
+            if (args == null) throw new ArgumentNullException("args");
+            _level = level;
+            _messageTemplate = messageTemplate;
+            _args = args;
         }
 
-        public MessageRelevance Relevance
+        public LogEventLevel Level
         {
-            get { return _relevance; }
+            get { return _level; }
         }
 
-        public string Title
+        public string MessageTemplate
         {
-            get { return _title; }
+            get { return _messageTemplate; }
         }
 
-        public string Message
+        public object[] Args
         {
-            get { return _message; }
+            get { return _args; }
         }
     }
 }

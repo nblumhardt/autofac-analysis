@@ -57,11 +57,11 @@
   <ItemGroup>
     <Compile Include="Display\EventWriter.cs" />
     <Compile Include="Display\DisplayModule.cs" />
+    <Compile Include="Display\IdDisplay.cs" />
     <Compile Include="Engine\Analytics\Leaks\LastNActivationsScopeTracker.cs" />
     <Compile Include="Engine\Analytics\Leaks\RootScopeLeakDetector.cs" />
     <Compile Include="Engine\Analytics\LifetimeDisposalOrder\OutOfOrderDisposalDetector.cs" />
     <Compile Include="Engine\Analytics\MessageEvent.cs" />
-    <Compile Include="Engine\Analytics\MessageRelevance.cs" />
     <Compile Include="Engine\Analytics\PersistentLifetimes\PersistentLifetimeDetector.cs" />
     <Compile Include="Engine\Analytics\TrackedInRootScope\TrackedInstanceInRootScopeDetector.cs" />
     <Compile Include="Engine\ApplicationConnectedEventArgs.cs" />

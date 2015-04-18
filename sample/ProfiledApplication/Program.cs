@@ -38,9 +38,10 @@ namespace ProfiledApplication
     {
         static void Main()
         {
-            Log.Logger = new LoggerConfiguration().WriteTo.LiterateConsole().CreateLogger();
-
-            Console.WriteLine("Started.");
+            Log.Logger = new LoggerConfiguration()
+                .WriteTo.LiterateConsole()
+                .Destructure.ToMaximumDepth(100) // Hmm
+                .CreateLogger();
 
             var builder = new ContainerBuilder();
             builder.RegisterModule(new ConfigurationSettingsReader());
@@ -54,26 +55,18 @@ namespace ProfiledApplication
             {
                 using (var ls1 = container.BeginLifetimeScope())
                 {
-                    var o1 = ls1.Resolve<C>();
-                    Console.WriteLine("Resolved a {0}.", o1);
+                    ls1.Resolve<C>();
                 }
 
-                Console.WriteLine("Taking a nap...");
                 System.Threading.Thread.Sleep(5000);
 
                 using (var ls2 = container.BeginLifetimeScope())
                 {
-                    var o = ls2.Resolve<C>();
-                    Console.WriteLine("Resolved a {0}.", o);
-
-                    var g = ls2.Resolve<G<int, string>>();
-                    Console.WriteLine("Resolved a {0}.", g);
-
-                    var ov = ls2.Resolve<Owned<C>>();
-                    Console.WriteLine("Resolved an {0}", ov);
+                    ls2.Resolve<C>();
+                    ls2.Resolve<G<int, string>>();
+                    ls2.Resolve<Owned<C>>();
                 }
 
-                Console.WriteLine("Done. Press any key...");
                 Console.ReadKey(true);
             }
         }

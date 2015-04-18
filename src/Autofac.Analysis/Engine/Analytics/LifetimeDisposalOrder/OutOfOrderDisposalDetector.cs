@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Autofac.Analysis.Engine.Application;
+using Serilog.Events;
 
 namespace Autofac.Analysis.Engine.Analytics.LifetimeDisposalOrder
 {
@@ -25,9 +26,9 @@ namespace Autofac.Analysis.Engine.Analytics.LifetimeDisposalOrder
                     return;
 
                 _descriptionsOfParentsWithWarningsIssued.Add(lifetimeScope.Description);
-                var children = string.Join(", ", lifetimeScope.ActiveChildren.Select(ls => ls.Description));
-                var message = string.Format("A {0} lifetime scope was disposed before its active children (including {1}).", lifetimeScope.Description, children);
-                var messageEvent = new MessageEvent(MessageRelevance.Error, "Out-of-Order Disposal", message);
+                var childScopeDescriptions = lifetimeScope.ActiveChildren.Select(ls => ls.Description).ToArray();
+                var messageEvent = new MessageEvent(LogEventLevel.Error, 
+                    "A {LifetimeScopeDescription} lifetime scope, {LifetimeScopeId}, was disposed before its active children (including {ChildScopeDescriptions}).", lifetimeScope.Description, lifetimeScope.Id, childScopeDescriptions);
                 _applicationEventQueue.Enqueue(messageEvent);
             }
         }

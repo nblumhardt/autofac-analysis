@@ -2,10 +2,10 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
-using Autofac.Analysis.Transport.Connector;
 using Autofac.Analysis.Transport.Model;
 using Autofac.Core;
 using Autofac.Core.Activators.Delegate;
@@ -20,16 +20,6 @@ namespace Autofac.Analysis.Source
     {
         readonly IdTracker _idTracker = new IdTracker();
         readonly ConcurrentDictionary<Type, TypeModel> _typeModels = new ConcurrentDictionary<Type, TypeModel>();
-
-        static readonly Assembly[] _nonUserCodeAssemblies = new[]
-        {
-            typeof (ContainerBuilder).Assembly,
-            typeof (AnalysisModule).Assembly,
-            typeof (string).Assembly,       // mscorlib
-            typeof (Trace).Assembly,        // System
-            typeof (Enumerable).Assembly,   // System.Core
-            typeof (IWriteQueue).Assembly
-        };
 
         public string GetComponentId(IComponentRegistration componentRegistration)
         {
@@ -151,7 +141,6 @@ namespace Autofac.Analysis.Source
             return new ResolveOperationModel(NewId(), lifetimeScope.Id, GetThreadId(Thread.CurrentThread), locationTypeAssemblyQualifiedName, locationMethodName);
         }
 
-        // ReSharper disable ConditionIsAlwaysTrueOrFalse, HeuristicUnreachableCode
         static MethodBase FindResolveCall(StackFrame[] frames)
         {
             for (var i = frames.Length - 1; i >= 0; --i)
@@ -178,12 +167,6 @@ namespace Autofac.Analysis.Source
 
             return null;
         }
-        // ReSharper restore ConditionIsAlwaysTrueOrFalse, HeuristicUnreachableCode
-
-        static bool IsUserCode(Assembly assembly)
-        {
-            return !_nonUserCodeAssemblies.Contains(assembly);
-        }
 
         public InstanceLookupModel GetInstanceLookupModel(IInstanceLookup instanceLookup, ResolveOperationModel resolveOperation)
         {
@@ -202,9 +185,10 @@ namespace Autofac.Analysis.Source
             return Guid.NewGuid().ToString();
         }
 
+        // Internal ids are uniformly strings
         public string GetThreadId(Thread thread)
         {
-            return thread.ManagedThreadId.ToString();
+            return thread.ManagedThreadId.ToString(CultureInfo.InvariantCulture);
         }
 
         public string GetTypeId(Type type)

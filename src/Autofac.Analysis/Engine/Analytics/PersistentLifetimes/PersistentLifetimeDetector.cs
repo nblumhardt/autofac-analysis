@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Autofac.Analysis.Engine.Application;
+using Serilog.Events;
 
 namespace Autofac.Analysis.Engine.Analytics.PersistentLifetimes
 {
@@ -35,8 +36,8 @@ namespace Autofac.Analysis.Engine.Analytics.PersistentLifetimes
                     if (!_descriptionsOfScopesWarnedAbout.Contains(lifetimeScope.Description))
                     {
                         _descriptionsOfScopesWarnedAbout.Add(lifetimeScope.Description);
-                        var message = string.Format("A {0} lifetime scope has been active for more than {1} seconds. To ensure that components are properly released, lifetime scopes must be disposed when no longer required.", lifetimeScope.Description, AgeThreshold.TotalSeconds);
-                        var messageEvent = new MessageEvent(MessageRelevance.Warning, "Lifetime Scope not Disposed", message);
+                        var messageEvent = new MessageEvent(LogEventLevel.Warning, 
+                            "A {LifetimeScopeDescription} lifetime scope, {LifetimeScopeId}, has been active for more than {AgeThresholdSeconds} seconds. To ensure that components are properly released, lifetime scopes must be disposed when no longer required.", lifetimeScope.Description, lifetimeScope.Id, AgeThreshold.TotalSeconds);
                         _applicationEventQueue.Enqueue(messageEvent);
                     }
 

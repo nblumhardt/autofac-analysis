@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Autofac.Analysis.Engine.Application;
+using Serilog.Events;
 
 namespace Autofac.Analysis.Engine.Analytics.Leaks
 {
@@ -49,8 +50,9 @@ namespace Autofac.Analysis.Engine.Analytics.Leaks
 
             if (resolveOperationsInThisScope == ResolveOperationsBeforeWarning)
             {
-                var message = string.Format("The component {0} has been resolved twice directly from the container. This can indicate a potential memory leak.", component.Description);
-                var warning = new MessageEvent(MessageRelevance.Warning, "Possible Memory Leak", message);
+                var warning = new MessageEvent(LogEventLevel.Warning,
+                    "The component {ComponentId}, {ComponentDescription}, has been resolved twice directly from the container. This can indicate a potential memory leak.", component.Id, component.Description);
+
                 _applicationEventQueue.Enqueue(warning);
                 tracker.HasWarningBeenIssued = true;
             }
