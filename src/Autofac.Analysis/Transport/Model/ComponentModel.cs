@@ -4,23 +4,12 @@ using System.Linq;
 
 namespace Autofac.Analysis.Transport.Model
 {
-    [Serializable]
     public class ComponentModel
     {
-        readonly string _targetComponentId;
-        readonly OwnershipModel _ownership;
-        readonly SharingModel _sharing;
-        readonly LifetimeModel _lifetime;
-        readonly ActivatorModel _activator;
-        readonly string _id;
-        readonly string _limitTypeId;
-        readonly IDictionary<string, string> _metadata;
-        readonly IEnumerable<ServiceModel> _services;
-
         public ComponentModel(
             string id,
             IEnumerable<ServiceModel> services,
-            string limitTypeId,
+            Type limitType,
             IDictionary<string, string> metadata,
             string targetComponentId,
             OwnershipModel ownership,
@@ -28,65 +17,35 @@ namespace Autofac.Analysis.Transport.Model
             LifetimeModel lifetime,
             ActivatorModel activator)
         {
-            if (id == null) throw new ArgumentNullException(nameof(id));
             if (services == null) throw new ArgumentNullException(nameof(services));
-            if (limitTypeId == null) throw new ArgumentNullException(nameof(limitTypeId));
             if (metadata == null) throw new ArgumentNullException(nameof(metadata));
-            if (targetComponentId == null) throw new ArgumentNullException(nameof(targetComponentId));
-            _id = id;
-            _limitTypeId = limitTypeId;
-            _metadata = new Dictionary<string,string>(metadata);
-            _services = services.ToArray();
-            _targetComponentId = targetComponentId;
-            _ownership = ownership;
-            _sharing = sharing;
-            _lifetime = lifetime;
-            _activator = activator;
+            Id = id ?? throw new ArgumentNullException(nameof(id));
+            LimitType = limitType ?? throw new ArgumentNullException(nameof(limitType));
+            Metadata = new Dictionary<string,string>(metadata);
+            Services = services.ToArray();
+            TargetComponentId = targetComponentId ?? throw new ArgumentNullException(nameof(targetComponentId));
+            Ownership = ownership;
+            Sharing = sharing;
+            Lifetime = lifetime;
+            Activator = activator;
         }
 
-        public ActivatorModel Activator
-        {
-            get { return _activator; }
-        }
+        public ActivatorModel Activator { get; }
 
-        public LifetimeModel Lifetime
-        {
-            get { return _lifetime; }
-        }
+        public LifetimeModel Lifetime { get; }
 
-        public SharingModel Sharing
-        {
-            get { return _sharing; }
-        }
+        public SharingModel Sharing { get; }
 
-        public OwnershipModel Ownership
-        {
-            get { return _ownership; }
-        }
+        public OwnershipModel Ownership { get; }
 
-        public string LimitTypeId
-        {
-            get { return _limitTypeId; }
-        }
+        public Type LimitType { get; }
 
-        public IDictionary<string, string> Metadata
-        {
-            get { return _metadata; }
-        }
+        public IDictionary<string, string> Metadata { get; }
 
-        public IEnumerable<ServiceModel> Services
-        {
-            get { return _services; }
-        }
+        public IEnumerable<ServiceModel> Services { get; }
 
-        public string Id
-        {
-            get { return _id; }
-        }
+        public string Id { get; }
 
-        public string TargetComponentId
-        {
-            get { return _targetComponentId; }
-        }
+        public string TargetComponentId { get; }
     }
 }

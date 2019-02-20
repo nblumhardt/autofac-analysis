@@ -16,7 +16,6 @@ namespace Autofac.Analysis
     {
         readonly ILifetimeScope _coreContainer, _sessionScope;
         readonly IWriteQueue _client;
-        readonly ModelMapper _modelMapper = new ModelMapper();
 
         public AnalysisModule(ILogger outputLogger)
         {
@@ -27,7 +26,7 @@ namespace Autofac.Analysis
             var coreBuilder = new ContainerBuilder();
             coreBuilder.RegisterInstance(outputLogger).ExternallyOwned();
             coreBuilder.RegisterModule<CoreModule>();
-            coreBuilder.RegisterModule<DisplayModule>();
+            coreBuilder.RegisterModule(new DisplayModule(outputLogger));
             coreBuilder.RegisterInstance(client).As<IReadQueue>();
             _coreContainer = coreBuilder.Build();
             _sessionScope = _coreContainer.BeginLifetimeScope("profiler-session");
@@ -57,29 +56,16 @@ namespace Autofac.Analysis
         protected override void AttachToComponentRegistration(IComponentRegistry componentRegistry, IComponentRegistration registration)
         {
             base.AttachToComponentRegistration(componentRegistry, registration);
-
-            var includedTypes = _modelMapper.GetReferencedTypes(registration);
-            foreach (var includedType in includedTypes)
-                SendTypeModelIfNeeded(includedType);
-           var message = new ComponentAddedMessage(_modelMapper.GetComponentModel(registration));            
+            
+            var message = new ComponentAddedMessage(ModelMapper.GetComponentModel(registration));            
             Send(message);
-        }
-
-        void SendTypeModelIfNeeded(Type type)
-        {
-            TypeModel typeModel;
-            if (_modelMapper.GetOrAddTypeModel(type, out typeModel))
-            {
-                var message = new TypeDiscoveredMessage(typeModel);
-                Send(message);
-            }
         }
 
         protected override void AttachToRegistrationSource(IComponentRegistry componentRegistry, IRegistrationSource registrationSource)
         {
             base.AttachToRegistrationSource(componentRegistry, registrationSource);
 
-            var message = new RegistrationSourceAddedMessage(_modelMapper.GetRegistrationSourceModel(registrationSource));
+            var message = new RegistrationSourceAddedMessage(ModelMapper.GetRegistrationSourceModel(registrationSource));
             Send(message);
         }
 
@@ -93,14 +79,14 @@ namespace Autofac.Analysis
 
         void AttachToLifetimeScope(ILifetimeScope lifetimeScope, ILifetimeScope parent = null)
         {
-            var lifetimeScopeModel = _modelMapper.GetLifetimeScopeModel(lifetimeScope, parent);
+            var lifetimeScopeModel = ModelMapper.GetLifetimeScopeModel(lifetimeScope, parent);
             var message = new LifetimeScopeBeginningMessage(lifetimeScopeModel);
             Send(message);
 
             lifetimeScope.CurrentScopeEnding += (s, e) =>
             {
                 Send(new LifetimeScopeEndingMessage(lifetimeScopeModel.Id));
-                _modelMapper.IdTracker.ForgetId(lifetimeScope);
+                ModelMapper.IdTracker.ForgetId(lifetimeScope);
             };
 
             lifetimeScope.ChildLifetimeScopeBeginning += (s, e) => AttachToLifetimeScope(e.LifetimeScope, lifetimeScope);
@@ -109,7 +95,7 @@ namespace Autofac.Analysis
 
         void AttachToResolveOperation(IResolveOperation resolveOperation, LifetimeScopeModel lifetimeScope)
         {
-            var resolveOperationModel = _modelMapper.GetResolveOperationModel(resolveOperation, lifetimeScope, new StackTrace());
+            var resolveOperationModel = ModelMapper.GetResolveOperationModel(resolveOperation, lifetimeScope, new StackTrace());
             Send(new ResolveOperationBeginningMessage(resolveOperationModel));
             resolveOperation.CurrentOperationEnding += (s, e) =>
             {
@@ -123,7 +109,7 @@ namespace Autofac.Analysis
 
         void AttachToInstanceLookup(IInstanceLookup instanceLookup, ResolveOperationModel resolveOperation)
         {
-            var instanceLookupModel = _modelMapper.GetInstanceLookupModel(instanceLookup, resolveOperation);
+            var instanceLookupModel = ModelMapper.GetInstanceLookupModel(instanceLookup, resolveOperation);
             Send(new InstanceLookupBeginningMessage(instanceLookupModel));
             instanceLookup.InstanceLookupEnding += (s, e) => Send(new InstanceLookupEndingMessage(instanceLookupModel.Id, e.NewInstanceActivated));
             instanceLookup.CompletionBeginning += (s, e) => Send(new InstanceLookupCompletionBeginningMessage(instanceLookupModel.Id));
@@ -135,6 +121,6 @@ namespace Autofac.Analysis
             _client.Enqueue(message);
         }
 
-        internal ModelMapper ModelMapper { get { return _modelMapper; } }
+        internal ModelMapper ModelMapper { get; } = new ModelMapper();
     }
 }

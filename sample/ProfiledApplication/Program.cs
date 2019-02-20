@@ -40,36 +40,37 @@ namespace ProfiledApplication
     {
         static void Main()
         {
-            var logger = new LoggerConfiguration()
+            using (var logger = new LoggerConfiguration()
                 .WriteTo.Console()
                 .Destructure.ToMaximumDepth(100) // Override the default limit of 5
-                .CreateLogger();
-
-            var builder = new ContainerBuilder();
-            builder.RegisterModule(new AnalysisModule(logger));
-            builder.RegisterType<A>().SingleInstance();
-            builder.RegisterType<B>().PropertiesAutowired(PropertyWiringOptions.AllowCircularDependencies);
-            builder.RegisterType<C>().WithMetadata("M", 42).WithMetadata("N", "B!");
-            builder.RegisterType<D>().SingleInstance();
-            builder.RegisterGeneric(typeof (G<,>));
-
-            using (var container = builder.Build())
+                .CreateLogger())
             {
-                using (var ls1 = container.BeginLifetimeScope())
+                var builder = new ContainerBuilder();
+                builder.RegisterModule(new AnalysisModule(logger));
+                builder.RegisterType<A>().SingleInstance();
+                builder.RegisterType<B>().PropertiesAutowired(PropertyWiringOptions.AllowCircularDependencies);
+                builder.RegisterType<C>().WithMetadata("M", 42).WithMetadata("N", "B!");
+                builder.RegisterType<D>().SingleInstance();
+                builder.RegisterGeneric(typeof(G<,>));
+
+                using (var container = builder.Build())
                 {
-                    ls1.Resolve<C>();
+                    using (var ls1 = container.BeginLifetimeScope())
+                    {
+                        ls1.Resolve<C>();
+                    }
+
+                    System.Threading.Thread.Sleep(5000);
+
+                    using (var ls2 = container.BeginLifetimeScope())
+                    {
+                        ls2.Resolve<C>();
+                        ls2.Resolve<G<int, string>>();
+                        ls2.Resolve<Owned<C>>();
+                    }
+
+                    Console.ReadKey(true);
                 }
-
-                System.Threading.Thread.Sleep(5000);
-
-                using (var ls2 = container.BeginLifetimeScope())
-                {
-                    ls2.Resolve<C>();
-                    ls2.Resolve<G<int, string>>();
-                    ls2.Resolve<Owned<C>>();
-                }
-
-                Console.ReadKey(true);
             }
         }
     }

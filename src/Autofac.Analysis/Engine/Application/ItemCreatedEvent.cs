@@ -2,16 +2,11 @@
 {
     public class ItemCreatedEvent<TItem>
     {
-        readonly TItem _item;
-
         public ItemCreatedEvent(TItem item)
         {
-            _item = item;
+            Item = item;
         }
 
-        public TItem Item
-        {
-            get { return _item; }
-        }
+        public TItem Item { get; }
     }
 }

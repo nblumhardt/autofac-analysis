@@ -20,8 +20,7 @@ namespace Autofac.Analysis.Transport.Connector
         {
             get
             {
-                object peeked;
-                return !_messages.TryPeek(out peeked);
+                return !_messages.TryPeek(out var peeked);
             }
         }
     }

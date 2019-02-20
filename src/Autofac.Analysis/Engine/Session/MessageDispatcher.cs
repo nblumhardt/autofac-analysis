@@ -13,22 +13,19 @@ namespace Autofac.Analysis.Engine.Session
 
         public MessageDispatcher(IComponentContext componentContext, IApplicationEventDispatcher applicationEventDispatcher)
         {
-            if (componentContext == null) throw new ArgumentNullException(nameof(componentContext));
-            if (applicationEventDispatcher == null) throw new ArgumentNullException(nameof(applicationEventDispatcher));
-            _componentContext = componentContext;
-            _applicationEventDispatcher = applicationEventDispatcher;
+            _componentContext = componentContext ?? throw new ArgumentNullException(nameof(componentContext));
+            _applicationEventDispatcher = applicationEventDispatcher ?? throw new ArgumentNullException(nameof(applicationEventDispatcher));
         }
 
         public void DispatchMessages(IReadQueue readQueue)
         {
             if (readQueue == null) throw new ArgumentNullException(nameof(readQueue));
 
-            object message;
-            while (readQueue.TryDequeue(out message))
+            while (readQueue.TryDequeue(out var message))
             {
                 var messageType = message.GetType();
                 var dispatchMethod = DispatchMessageOfTypeMethod.MakeGenericMethod(messageType);
-                dispatchMethod.Invoke(this, new[] {message});
+                dispatchMethod.Invoke(this, new[] { message });
                 _applicationEventDispatcher.DispatchApplicationEvents();
             }
 

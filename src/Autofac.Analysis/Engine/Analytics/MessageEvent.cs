@@ -5,32 +5,17 @@ namespace Autofac.Analysis.Engine.Analytics
 {
     public class MessageEvent
     {
-        readonly LogEventLevel _level;
-        readonly string _messageTemplate;
-        readonly object[] _args;
-
         public MessageEvent(LogEventLevel level, string messageTemplate, params object[] args)
         {
-            if (messageTemplate == null) throw new ArgumentNullException(nameof(messageTemplate));
-            if (args == null) throw new ArgumentNullException(nameof(args));
-            _level = level;
-            _messageTemplate = messageTemplate;
-            _args = args;
+            Level = level;
+            MessageTemplate = messageTemplate ?? throw new ArgumentNullException(nameof(messageTemplate));
+            Args = args ?? throw new ArgumentNullException(nameof(args));
         }
 
-        public LogEventLevel Level
-        {
-            get { return _level; }
-        }
+        public LogEventLevel Level { get; }
 
-        public string MessageTemplate
-        {
-            get { return _messageTemplate; }
-        }
+        public string MessageTemplate { get; }
 
-        public object[] Args
-        {
-            get { return _args; }
-        }
+        public object[] Args { get; }
     }
 }

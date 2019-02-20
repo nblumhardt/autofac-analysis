@@ -5,61 +5,27 @@ namespace Autofac.Analysis.Engine.Application
 {
     public class InstanceLookup : IApplicationItem
     {
-        readonly string _id;
-        readonly ResolveOperation _resolveOperation;
-        readonly LifetimeScope _activationScope;
-        readonly Component _component;
-        readonly InstanceLookup _dependent;
-        readonly IList<InstanceLookup> _dependencyLookups = new List<InstanceLookup>();
-        bool _sharedInstanceReused;
-
         public InstanceLookup(string id, ResolveOperation resolveOperation, LifetimeScope activationScope, Component component, InstanceLookup dependent = null)
         {
-            if (id == null) throw new ArgumentNullException(nameof(id));
-            if (resolveOperation == null) throw new ArgumentNullException(nameof(resolveOperation));
-            if (activationScope == null) throw new ArgumentNullException(nameof(activationScope));
-            if (component == null) throw new ArgumentNullException(nameof(component));
-            _id = id;
-            _resolveOperation = resolveOperation;
-            _activationScope = activationScope;
-            _component = component;
-            _dependent = dependent;
+            Id = id ?? throw new ArgumentNullException(nameof(id));
+            ResolveOperation = resolveOperation ?? throw new ArgumentNullException(nameof(resolveOperation));
+            ActivationScope = activationScope ?? throw new ArgumentNullException(nameof(activationScope));
+            Component = component ?? throw new ArgumentNullException(nameof(component));
+            Dependent = dependent;
         }
 
-        public InstanceLookup Dependent
-        {
-            get { return _dependent; }
-        }
+        public InstanceLookup Dependent { get; }
 
-        public ResolveOperation ResolveOperation
-        {
-            get { return _resolveOperation; }
-        }
+        public ResolveOperation ResolveOperation { get; }
 
-        public string Id
-        {
-            get { return _id; }
-        }
+        public string Id { get; }
 
-        public Component Component
-        {
-            get { return _component; }
-        }
+        public Component Component { get; }
 
-        public LifetimeScope ActivationScope
-        {
-            get { return _activationScope; }
-        }
+        public LifetimeScope ActivationScope { get; }
 
-        public bool SharedInstanceReused
-        {
-            get { return _sharedInstanceReused; }
-            set { _sharedInstanceReused = value; }
-        }
+        public bool SharedInstanceReused { get; set; }
 
-        public IList<InstanceLookup> DependencyLookups
-        {
-            get { return _dependencyLookups; }
-        }
+        public IList<InstanceLookup> DependencyLookups { get; } = new List<InstanceLookup>();
     }
 }

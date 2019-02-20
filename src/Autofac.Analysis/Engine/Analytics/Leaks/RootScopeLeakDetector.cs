@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Autofac.Analysis.Engine.Application;
+using Autofac.Features.OwnedInstances;
 using Serilog.Events;
 
 namespace Autofac.Analysis.Engine.Analytics.Leaks
@@ -9,7 +10,6 @@ namespace Autofac.Analysis.Engine.Analytics.Leaks
     {
         const int ResolveOperationsBeforeWarning = 2;
         const int MaxActivationScopesToTrackPerComponent = 1;
-        const string OwnedTypeFullName = "Autofac.Features.OwnedInstances.Owned";
 
         readonly IApplicationEventQueue _applicationEventQueue;
         readonly IDictionary<string, LastNActivationsScopeTracker> _componentToScopeTrackers = new Dictionary<string, LastNActivationsScopeTracker>();
@@ -32,11 +32,10 @@ namespace Autofac.Analysis.Engine.Analytics.Leaks
                 return;
 
             var component = instanceLookup.Component;
-            if (component.LimitType.Identity.FullName == OwnedTypeFullName)
+            if (component.LimitType.IsConstructedGenericType && component.LimitType.GetGenericTypeDefinition() == typeof(Owned<>))
                 return;
 
-            LastNActivationsScopeTracker tracker;
-            if (!_componentToScopeTrackers.TryGetValue(component.Id, out tracker))
+            if (!_componentToScopeTrackers.TryGetValue(component.Id, out var tracker))
             {
                 tracker = new LastNActivationsScopeTracker(MaxActivationScopesToTrackPerComponent);
                 _componentToScopeTrackers[component.Id] = tracker;

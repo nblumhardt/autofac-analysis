@@ -17,8 +17,7 @@ namespace Autofac.Analysis.Engine.Analytics.PersistentLifetimes
 
         public PersistentLifetimeDetector(IApplicationEventQueue applicationEventQueue)
         {
-            if (applicationEventQueue == null) throw new ArgumentNullException(nameof(applicationEventQueue));
-            _applicationEventQueue = applicationEventQueue;
+            _applicationEventQueue = applicationEventQueue ?? throw new ArgumentNullException(nameof(applicationEventQueue));
         }
 
         public void Handle(ClockTickEvent applicationEvent)

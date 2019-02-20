@@ -18,8 +18,7 @@ namespace Autofac.Analysis.Engine.Session
 
         public ApplicationEventDispatcher(IComponentContext componentContext)
         {
-            if (componentContext == null) throw new ArgumentNullException(nameof(componentContext));
-            _componentContext = componentContext;
+            _componentContext = componentContext ?? throw new ArgumentNullException(nameof(componentContext));
         }
 
         public void Enqueue(object applicationEvent)
@@ -30,11 +29,10 @@ namespace Autofac.Analysis.Engine.Session
 
         public void DispatchApplicationEvents()
         {
-            object applicationEvent;
-            while (_events.TryDequeue(out applicationEvent))
+            while (_events.TryDequeue(out var applicationEvent))
             {
                 var dispatchMethod = DispatchEventOfTypeMethod.MakeGenericMethod(applicationEvent.GetType());
-                dispatchMethod.Invoke(this, new[] {applicationEvent});
+                dispatchMethod.Invoke(this, new[] { applicationEvent });
             }
         }
 

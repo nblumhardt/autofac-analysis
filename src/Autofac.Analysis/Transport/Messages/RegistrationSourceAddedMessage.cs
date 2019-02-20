@@ -6,17 +6,11 @@ namespace Autofac.Analysis.Transport.Messages
     [Serializable]
     public class RegistrationSourceAddedMessage
     {
-        readonly RegistrationSourceModel _registrationSource;
-
         public RegistrationSourceAddedMessage(RegistrationSourceModel registrationSource)
         {
-            if (registrationSource == null) throw new ArgumentNullException(nameof(registrationSource));
-            _registrationSource = registrationSource;
+            RegistrationSource = registrationSource ?? throw new ArgumentNullException(nameof(registrationSource));
         }
 
-        public RegistrationSourceModel RegistrationSource
-        {
-            get { return _registrationSource; }
-        }
+        public RegistrationSourceModel RegistrationSource { get; }
     }
 }

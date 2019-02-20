@@ -7,7 +7,7 @@ using Serilog;
 
 namespace Autofac.Analysis.Display
 {
-    sealed class SerilogEventWriter :
+    sealed class EventWriter :
         IApplicationEventHandler<MessageEvent>,
         IApplicationEventHandler<ItemCreatedEvent<ResolveOperation>>,
         IApplicationEventHandler<ItemCompletedEvent<ResolveOperation>>,
@@ -17,11 +17,11 @@ namespace Autofac.Analysis.Display
         readonly IApplicationEventBus _eventBus;
         readonly ILogger _logger;
 
-        public SerilogEventWriter(IApplicationEventBus eventBus, ILogger logger)
+        public EventWriter(IApplicationEventBus eventBus, ILogger logger)
         {
             if (logger == null) throw new ArgumentNullException(nameof(logger));
             _eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
-            _logger = logger.ForContext<SerilogEventWriter>();
+            _logger = logger.ForContext<EventWriter>();
         }
 
         public void Start()
@@ -45,17 +45,12 @@ namespace Autofac.Analysis.Display
         {
             if (applicationEvent.Item.Parent != null)
             {
-                _logger
-                    .ForContext("ResolveOperationId", applicationEvent.Item.Id)
-                    .ForContext("ParentResolveOperationId", applicationEvent.Item.Parent.Id)
-                    .Information("Resolve operation {ResolveOperationShortId} started as child of {ParentResolveOperationShortId}",
-                        IdDisplay.MakeShortId(applicationEvent.Item.Id), IdDisplay.MakeShortId(applicationEvent.Item.Parent.Id));
+                _logger.Information("Resolve operation {ResolveOperationId} started as child of {ParentResolveOperationId}",
+                        applicationEvent.Item.Id, applicationEvent.Item.Parent.Id);
             }
             else
             {
-                _logger
-                    .ForContext("ResolveOperationId", applicationEvent.Item.Id)
-                    .Information("Resolve operation {ResolveOperationShortId} started from {CallingMethod}", IdDisplay.MakeShortId(applicationEvent.Item.Id), applicationEvent.Item.CallingMethod.DisplayName);
+                _logger.Information("Resolve operation {ResolveOperationId} started from {CallingMethod}", applicationEvent.Item.Id, applicationEvent.Item.CallingMethod);
             }
         }
 
@@ -66,9 +61,7 @@ namespace Autofac.Analysis.Display
             //
             var graph = ToObjectGraph(applicationEvent.Item.RootInstanceLookup);
 
-            _logger
-                .ForContext("ResolveOperationId", applicationEvent.Item.Id)
-                .Information("Resolve operation {ResolveOperationShortId} returned {@Graph}", IdDisplay.MakeShortId(applicationEvent.Item.Id), graph);
+            _logger.Information("Resolve operation {ResolveOperationId} returned {@Graph}", applicationEvent.Item.Id, graph);
         }
 
         static object ToObjectGraph(InstanceLookup instanceLookup)
@@ -83,7 +76,7 @@ namespace Autofac.Analysis.Display
                 {
                     return new
                     {
-                        Component = instanceLookup.Component.LimitType.Identity.DisplayName,
+                        Component = instanceLookup.Component.LimitType,
                         Reused = instanceLookup.SharedInstanceReused,
                         Scope = instanceLookup.ActivationScope.Description
                     };
@@ -91,7 +84,7 @@ namespace Autofac.Analysis.Display
 
                 return new
                 {
-                    Component = instanceLookup.Component.LimitType.Identity.DisplayName,
+                    Component = instanceLookup.Component.LimitType,
                     Reused = instanceLookup.SharedInstanceReused,
                     Scope = instanceLookup.ActivationScope.Description,
                     Dependencies = instanceLookup.DependencyLookups.Select(ToObjectGraph).ToArray()
@@ -102,14 +95,14 @@ namespace Autofac.Analysis.Display
             {
                 return new
                 {
-                    Component = instanceLookup.Component.LimitType.Identity.DisplayName,
+                    Component = instanceLookup.Component.LimitType,
                     Scope = instanceLookup.ActivationScope.Description
                 };
             }
 
             return new
             {
-                Component = instanceLookup.Component.LimitType.Identity.DisplayName,
+                Component = instanceLookup.Component.LimitType,
                 Scope = instanceLookup.ActivationScope.Description,
                 Dependencies = instanceLookup.DependencyLookups.Select(ToObjectGraph).ToArray()
             };

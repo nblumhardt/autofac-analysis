@@ -5,24 +5,14 @@ namespace Autofac.Analysis.Transport.Messages
     [Serializable]
     public class ProfilerConnectedMessage
     {
-        readonly string _processName;
-        readonly int _processId;
-
         public ProfilerConnectedMessage(string processName, int processId)
         {
-            if (processName == null) throw new ArgumentNullException(nameof(processName));
-            _processName = processName;
-            _processId = processId;
+            ProcessName = processName ?? throw new ArgumentNullException(nameof(processName));
+            ProcessId = processId;
         }
 
-        public int ProcessId
-        {
-            get { return _processId; }
-        }
+        public int ProcessId { get; }
 
-        public string ProcessName
-        {
-            get { return _processName; }
-        }
+        public string ProcessName { get; }
     }
 }

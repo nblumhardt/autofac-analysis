@@ -13,8 +13,7 @@ namespace Autofac.Analysis.Engine.Analytics.LifetimeDisposalOrder
 
         public OutOfOrderDisposalDetector(IApplicationEventQueue applicationEventQueue)
         {
-            if (applicationEventQueue == null) throw new ArgumentNullException(nameof(applicationEventQueue));
-            _applicationEventQueue = applicationEventQueue;
+            _applicationEventQueue = applicationEventQueue ?? throw new ArgumentNullException(nameof(applicationEventQueue));
         }
 
         public void Handle(ItemCompletedEvent<LifetimeScope> applicationEvent)

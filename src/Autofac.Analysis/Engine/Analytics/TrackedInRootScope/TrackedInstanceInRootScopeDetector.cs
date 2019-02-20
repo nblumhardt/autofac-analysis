@@ -13,8 +13,7 @@ namespace Autofac.Analysis.Engine.Analytics.TrackedInRootScope
 
         public TrackedInstanceInRootScopeDetector(IApplicationEventQueue applicationEventQueue)
         {
-            if (applicationEventQueue == null) throw new ArgumentNullException(nameof(applicationEventQueue));
-            _applicationEventQueue = applicationEventQueue;
+            _applicationEventQueue = applicationEventQueue ?? throw new ArgumentNullException(nameof(applicationEventQueue));
         }
 
         public void Handle(ItemCompletedEvent<InstanceLookup> applicationEvent)
