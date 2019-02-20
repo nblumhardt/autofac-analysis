@@ -1,6 +1,5 @@
 ﻿using System;
 using Autofac.Analysis.Engine.Application;
-using Autofac.Analysis.Engine.Util;
 using Autofac.Analysis.Transport.Messages;
 
 namespace Autofac.Analysis.Engine.Updaters
