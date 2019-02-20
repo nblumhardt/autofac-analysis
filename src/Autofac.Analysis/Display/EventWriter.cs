@@ -12,6 +12,7 @@ namespace Autofac.Analysis.Display
         IApplicationEventHandler<ItemCreatedEvent<ResolveOperation>>,
         IApplicationEventHandler<ItemCompletedEvent<ResolveOperation>>,
         IApplicationEventHandler<ItemCreatedEvent<Component>>,
+        IApplicationEventHandler<ItemCreatedEvent<RegistrationSource>>,
         IDisposable,
         IStartable
     {
@@ -72,6 +73,13 @@ namespace Autofac.Analysis.Display
             _logger
                 .ForContext("Component", applicationEvent.Item, destructureObjects: true)
                 .Information("Component {ComponentId}, {Description}, was registered", applicationEvent.Item.Id, applicationEvent.Item.Description);
+        }
+
+        public void Handle(ItemCreatedEvent<RegistrationSource> applicationEvent)
+        {
+            _logger
+                .ForContext("RegistrationSource", applicationEvent.Item, destructureObjects: true)
+                .Information("Registration source {RegistrationSourceId}, {Description}, was added", applicationEvent.Item.Id, applicationEvent.Item.Description);
         }
 
         static object ToObjectGraph(InstanceLookup instanceLookup)
