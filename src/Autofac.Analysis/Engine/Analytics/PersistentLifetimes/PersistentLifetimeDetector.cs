@@ -35,8 +35,10 @@ namespace Autofac.Analysis.Engine.Analytics.PersistentLifetimes
                     if (!_descriptionsOfScopesWarnedAbout.Contains(lifetimeScope.Description))
                     {
                         _descriptionsOfScopesWarnedAbout.Add(lifetimeScope.Description);
-                        var messageEvent = new MessageEvent(LogEventLevel.Warning, 
-                            "A {LifetimeScopeDescription} lifetime scope, {LifetimeScopeId}, has been active for more than {AgeThresholdSeconds} seconds. To ensure that components are properly released, lifetime scopes must be disposed when no longer required.", lifetimeScope.Description, lifetimeScope.Id, AgeThreshold.TotalSeconds);
+                        var messageEvent = new MessageEvent(LogEventLevel.Warning,                             
+                            "{AnalysisCode} A {LifetimeScopeDescription} lifetime scope, {LifetimeScopeId}, has been active for more than {AgeThresholdSeconds} seconds. To ensure that components are properly released, lifetime scopes must be disposed when no longer required.", 
+                            AnalysisCodes.PersistentLifetimeScope,
+                            lifetimeScope.Description, lifetimeScope.Id, AgeThreshold.TotalSeconds);
                         _applicationEventQueue.Enqueue(messageEvent);
                     }
 

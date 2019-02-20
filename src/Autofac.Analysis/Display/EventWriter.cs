@@ -11,6 +11,7 @@ namespace Autofac.Analysis.Display
         IApplicationEventHandler<MessageEvent>,
         IApplicationEventHandler<ItemCreatedEvent<ResolveOperation>>,
         IApplicationEventHandler<ItemCompletedEvent<ResolveOperation>>,
+        IApplicationEventHandler<ItemCreatedEvent<Component>>,
         IDisposable,
         IStartable
     {
@@ -50,7 +51,7 @@ namespace Autofac.Analysis.Display
             }
             else
             {
-                _logger.Information("Resolve operation {ResolveOperationId} started from {CallingMethod}", applicationEvent.Item.Id, applicationEvent.Item.CallingMethod);
+                _logger.Information("Resolve operation {ResolveOperationId} started from {CallingMethod} on {CallingType}", applicationEvent.Item.Id, applicationEvent.Item.CallingMethod, applicationEvent.Item.CallingType);
             }
         }
 
@@ -61,7 +62,16 @@ namespace Autofac.Analysis.Display
             //
             var graph = ToObjectGraph(applicationEvent.Item.RootInstanceLookup);
 
-            _logger.Information("Resolve operation {ResolveOperationId} returned {@Graph}", applicationEvent.Item.Id, graph);
+            _logger
+                .ForContext("Graph", graph, destructureObjects: true)
+                .Information("Resolve operation {ResolveOperationId} returned an instance from {ComponentId}", applicationEvent.Item.Id, applicationEvent.Item.RootInstanceLookup.Component.Id);
+        }
+
+        public void Handle(ItemCreatedEvent<Component> applicationEvent)
+        {
+            _logger
+                .ForContext("Component", applicationEvent.Item, destructureObjects: true)
+                .Information("Component {ComponentId}, {Description}, was registered", applicationEvent.Item.Id, applicationEvent.Item.Description);
         }
 
         static object ToObjectGraph(InstanceLookup instanceLookup)

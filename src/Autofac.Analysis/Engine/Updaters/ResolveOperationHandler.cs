@@ -37,7 +37,7 @@ namespace Autofac.Analysis.Engine.Updaters
             if (thread.ResolveOperationStack.Count != 0)
                 parent = thread.ResolveOperationStack.Peek();
             
-            var resolveOperation = new ResolveOperation(message.ResolveOperation.Id, lifetimeScope, thread, parent, message.ResolveOperation.CallingMethod);
+            var resolveOperation = new ResolveOperation(message.ResolveOperation.Id, lifetimeScope, thread, parent, message.ResolveOperation.CallingType, message.ResolveOperation.CallingMethod);
             if (parent != null)
                 parent.SubOperations.Add(resolveOperation);
 

@@ -17,7 +17,7 @@ namespace Autofac.Analysis.Display
             base.Load(builder);
 
             builder.RegisterType<EventWriter>().SingleInstance();
-            builder.RegisterInstance(_logger.ForContext("SessionId", Guid.NewGuid().ToString("n"))).ExternallyOwned();
+            builder.RegisterInstance(_logger.ForContext("AutofacAnalysisSessionId", Guid.NewGuid().ToString("n"))).ExternallyOwned();
         }
     }
 }

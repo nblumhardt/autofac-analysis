@@ -13,12 +13,13 @@ namespace Autofac.Analysis.Engine.Application
     /// </summary>
     public class ResolveOperation : IApplicationItem
     {
-        public ResolveOperation(string id, LifetimeScope lifetimeScope, Thread thread, ResolveOperation parent = null, MethodBase callingMethod = null)
+        public ResolveOperation(string id, LifetimeScope lifetimeScope, Thread thread, ResolveOperation parent = null, Type callingType = null, MethodBase callingMethod = null)
         {
             Id = id ?? throw new ArgumentNullException(nameof(id));
             LifetimeScope = lifetimeScope ?? throw new ArgumentNullException(nameof(lifetimeScope));
             Thread = thread ?? throw new ArgumentNullException(nameof(thread));
             Parent = parent;
+            CallingType = callingType;
             CallingMethod = callingMethod;
         }
 
@@ -26,6 +27,7 @@ namespace Autofac.Analysis.Engine.Application
 
         public Thread Thread { get; }
 
+        public Type CallingType { get; }
         public MethodBase CallingMethod { get; }
 
         public LifetimeScope LifetimeScope { get; }

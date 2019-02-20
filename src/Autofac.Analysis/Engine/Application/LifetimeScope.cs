@@ -23,7 +23,7 @@ namespace Autofac.Analysis.Engine.Application
             get
             {
                 var level = 0;
-                var next = this;
+                var next = Parent;
                 while (next != null)
                 {
                     level++;
@@ -38,19 +38,16 @@ namespace Autofac.Analysis.Engine.Application
             get
             {
                 if (Tag == null)
-                    return "level " + Level;
+                    return "<level " + Level + ">";
 
                 if (Tag == "root")
-                    return "root container";
+                    return "<root>";
 
                 return Tag;
             }
         }
 
-        public bool IsRootScope
-        {
-            get { return Parent == null; }
-        }
+        public bool IsRootScope => Parent == null;
 
         public ICollection<LifetimeScope> ActiveChildren { get; } = new HashSet<LifetimeScope>();
     }
