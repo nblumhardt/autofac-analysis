@@ -1,153 +1,143 @@
 ﻿using Autofac.Analysis.Engine.Application;
 using Autofac.Analysis.Engine.Util;
-using NUnit.Framework;
+using Xunit;
 
 namespace Autofac.Analysis.Tests.Util
 {
     public class TypeNameParserTests
     {
-        [TestFixture]
         public class WhenParsingANameWithSimpleQualification
         {
-            TypeIdentifier _parsed;
+            readonly TypeIdentifier _parsed;
 
-            [SetUp]
-            public void SetUp()
+            public WhenParsingANameWithSimpleQualification()
             {
                 _parsed = TypeNameParser.ParseAssemblyQualifiedTypeName("Namespace.Class, Company.Product");
             }
 
-            [Test]
+            [Fact]
             public void TheNameIsParsed()
             {
-                Assert.AreEqual("Namespace.Class", _parsed.FullName);                
+                Assert.Equal("Namespace.Class", _parsed.FullName);                
             }
 
-            [Test]
+            [Fact]
             public void TheAssemblyNameIsParsed()
             {
-                Assert.AreEqual("Company.Product", _parsed.AssemblyName);
+                Assert.Equal("Company.Product", _parsed.AssemblyName);
             }
         }
 
-        [TestFixture]
         public class WhenParsingANameWithGenericArguments
         {
-            TypeIdentifier _parsed;
+            readonly TypeIdentifier _parsed;
 
-            [SetUp]
-            public void SetUp()
+            public WhenParsingANameWithGenericArguments()
             {
                 _parsed = TypeNameParser.ParseAssemblyQualifiedTypeName(
                     "Namespace.Class`2[[A, B],[C, D]], Company.Product");
             }
 
-            [Test]
+            [Fact]
             public void TheNameIsParsed()
             {
-                Assert.AreEqual("Namespace.Class", _parsed.FullName);
+                Assert.Equal("Namespace.Class", _parsed.FullName);
             }
 
-            [Test]
+            [Fact]
             public void TheAssemblyNameIsParsed()
             {
-                Assert.AreEqual("Company.Product", _parsed.AssemblyName);
+                Assert.Equal("Company.Product", _parsed.AssemblyName);
             }
 
-            [Test]
+            [Fact]
             public void TheGenericArgumentsAreParsed()
             {
-                Assert.AreEqual(2, _parsed.GenericArguments.Length);
+                Assert.Equal(2, _parsed.GenericArguments.Length);
             }
 
-            [Test]
+            [Fact]
             public void TheFirstArgIsNamedCorrectly()
             {
-                Assert.AreEqual("A", _parsed.GenericArguments[0].FullName);
+                Assert.Equal("A", _parsed.GenericArguments[0].FullName);
             }
         }
 
-        [TestFixture]
         public class WhenParsingANameWithNestedGenerics
         {
-            TypeIdentifier _parsed;
+            readonly TypeIdentifier _parsed;
 
-            [SetUp]
-            public void SetUp()
+            public WhenParsingANameWithNestedGenerics()
             {
                 _parsed = TypeIdentifier.Parse("Autofac.Features.Metadata.Meta`1[[System.Func`1[[Autofac.Features.OwnedInstances.Owned`1[[Company.App.ITask, Company.App, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], Autofac, Version=2.4.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]][], Autofac, Version=2.4.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da");
             }
 
-            [Test]
+            [Fact]
             public void TheOuterTypeNameIsCorrect()
             {
-                Assert.AreEqual("Autofac.Features.Metadata.Meta", _parsed.FullName);
+                Assert.Equal("Autofac.Features.Metadata.Meta", _parsed.FullName);
             }
 
-            [Test]
+            [Fact]
             public void TheFirstNestedTypeNameIsCorrect()
             {
-                Assert.AreEqual("System.Func", _parsed.GenericArguments[0].FullName);
+                Assert.Equal("System.Func", _parsed.GenericArguments[0].FullName);
             }
 
-            [Test]
+            [Fact]
             public void TheSecondNestedTypeNameIsCorrect()
             {
-                Assert.AreEqual("Autofac.Features.OwnedInstances.Owned", _parsed.GenericArguments[0].GenericArguments[0].FullName);
+                Assert.Equal("Autofac.Features.OwnedInstances.Owned", _parsed.GenericArguments[0].GenericArguments[0].FullName);
             }
 
-            [Test]
+            [Fact]
             public void TheThirdNestedTypeNameIsCorrect()
             {
-                Assert.AreEqual("Company.App.ITask", _parsed.GenericArguments[0].GenericArguments[0].GenericArguments[0].FullName);
+                Assert.Equal("Company.App.ITask", _parsed.GenericArguments[0].GenericArguments[0].GenericArguments[0].FullName);
             }
 
-            [Test]
+            [Fact]
             public void TheTypeFullNameIsDescribedCorrectly()
             {
-                Assert.AreEqual("Autofac.Features.Metadata.Meta<System.Func<Autofac.Features.OwnedInstances.Owned<Company.App.ITask>>>[]", _parsed.DisplayFullName);
+                Assert.Equal("Autofac.Features.Metadata.Meta<System.Func<Autofac.Features.OwnedInstances.Owned<Company.App.ITask>>>[]", _parsed.DisplayFullName);
             }
 
-            [Test]
+            [Fact]
             public void TheTypeIsDescribedCorrectly()
             {
-                Assert.AreEqual("Meta<Func<Owned<ITask>>>[]", _parsed.DisplayName);
+                Assert.Equal("Meta<Func<Owned<ITask>>>[]", _parsed.DisplayName);
             }
         }
 
-        [TestFixture]
         public class WhenParsingAGenericThatHasANestedPrivate
         {
-            TypeIdentifier _parsed;
+            readonly TypeIdentifier _parsed;
 
-            [SetUp]
-            public void SetUp()
+            public WhenParsingAGenericThatHasANestedPrivate()
             {
                 _parsed = TypeIdentifier.Parse("UserNamespace.Submodule.Class`1+NestedSubclass, UserNamespace.Submodule, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
             }
 
-            [Test]
+            [Fact]
             public void TheOuterTypeNameIsCorrect()
             {
-                Assert.AreEqual("UserNamespace.Submodule.Class+NestedSubclass", _parsed.FullName);
+                Assert.Equal("UserNamespace.Submodule.Class+NestedSubclass", _parsed.FullName);
             }
         }
 
-        [TestFixture]
         public class WhenTypeUsesContravariance
         {
-            TypeIdentifier _parsed;
+            readonly TypeIdentifier _parsed;
 
-            [SetUp]
-            public void SetUp()
+            public WhenTypeUsesContravariance()
             {
                 _parsed = TypeIdentifier.Parse("Autofac.Features.Variance.ContravariantRegistrationSource+<>c__DisplayClass8+<>c__DisplayClassa, Autofac, Version=3.0.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da");
             }
 
-            [Test, Ignore("Need to look into what this type name actually means; see #16")]
+            [Fact(Skip = "Need to look into what this type name actually means; see #16")]
             public void TheOuterTypeNameIsCorrect()
             {
-                Assert.AreEqual("Autofac.Features.Variance.ContravariantRegistrationSource", _parsed.FullName);
+                Assert.Equal("Autofac.Features.Variance.ContravariantRegistrationSource", _parsed.FullName);
             }
         }
     }

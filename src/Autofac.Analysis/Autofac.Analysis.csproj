@@ -1,160 +1,21 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{DC4415DC-FB75-433C-8078-E8E7C204EE1F}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Autofac.Analysis</RootNamespace>
-    <AssemblyName>Autofac.Analysis</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
+    <Description>Runtime analysis of Autofac container events</Description>
+    <VersionPrefix>1.0.0</VersionPrefix>
+    <Authors>Autofac Contributors</Authors>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <PackageTags>autofac</PackageTags>
+    <PackageProjectUrl>https://github.com/autofac/autofac-analysis</PackageProjectUrl>
+    <PackageLicenseUrl>https://opensource.org/licenses/mit-license.php</PackageLicenseUrl>
+    <RepositoryUrl>https://github.com/autofac/autofac-analysis</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
+  
   <ItemGroup>
-    <Reference Include="Autofac, Version=3.5.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Autofac.3.5.2\lib\net40\Autofac.dll</HintPath>
-    </Reference>
-    <Reference Include="Serilog, Version=1.5.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Serilog.1.5.1\lib\net45\Serilog.dll</HintPath>
-    </Reference>
-    <Reference Include="Serilog.FullNetFx, Version=1.5.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Serilog.1.5.1\lib\net45\Serilog.FullNetFx.dll</HintPath>
-    </Reference>
-    <Reference Include="Sprache, Version=2.0.0.45, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Sprache.2.0.0.45\lib\portable-net4+netcore45+win8+wp8+sl5+MonoAndroid1+MonoTouch1\Sprache.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
+    <PackageReference Include="Autofac" Version="4.9.1" />
+    <PackageReference Include="Serilog" Version="2.8.0" />
+    <PackageReference Include="Sprache" Version="2.2.0" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Display\EventWriter.cs" />
-    <Compile Include="Display\DisplayModule.cs" />
-    <Compile Include="Display\IdDisplay.cs" />
-    <Compile Include="Engine\Analytics\Leaks\LastNActivationsScopeTracker.cs" />
-    <Compile Include="Engine\Analytics\Leaks\RootScopeLeakDetector.cs" />
-    <Compile Include="Engine\Analytics\LifetimeDisposalOrder\OutOfOrderDisposalDetector.cs" />
-    <Compile Include="Engine\Analytics\MessageEvent.cs" />
-    <Compile Include="Engine\Analytics\PersistentLifetimes\PersistentLifetimeDetector.cs" />
-    <Compile Include="Engine\Analytics\TrackedInRootScope\TrackedInstanceInRootScopeDetector.cs" />
-    <Compile Include="Engine\ApplicationConnectedEventArgs.cs" />
-    <Compile Include="Engine\ApplicationDisconnectedEventArgs.cs" />
-    <Compile Include="Engine\ApplicationEventHandlers\ActionEventHandler.cs" />
-    <Compile Include="Engine\Application\ClockTickEvent.cs" />
-    <Compile Include="Engine\Application\Component.cs" />
-    <Compile Include="Engine\Application\IActiveItemRepository.cs" />
-    <Compile Include="Engine\Application\IApplicationEventHandler.cs" />
-    <Compile Include="Engine\Application\IApplicationEventQueue.cs" />
-    <Compile Include="Engine\Application\IApplicationItem.cs" />
-    <Compile Include="Engine\Application\InstanceLookup.cs" />
-    <Compile Include="Engine\Application\ItemCompletedEvent.cs" />
-    <Compile Include="Engine\Application\ItemCreatedEvent.cs" />
-    <Compile Include="Engine\Application\LifetimeScope.cs" />
-    <Compile Include="Engine\Application\MethodIdentifier.cs" />
-    <Compile Include="Engine\Application\ProfilerConnectedEvent.cs" />
-    <Compile Include="Engine\Application\RegistrationSource.cs" />
-    <Compile Include="Engine\Application\ResolveOperation.cs" />
-    <Compile Include="Engine\Application\Service.cs" />
-    <Compile Include="Engine\Application\Thread.cs" />
-    <Compile Include="Engine\Application\TypeData.cs" />
-    <Compile Include="Engine\Application\TypeIdentifier.cs" />
-    <Compile Include="Engine\Connector\NamedPipesReadQueue.cs" />
-    <Compile Include="Engine\Constants.cs" />
-    <Compile Include="Engine\CoreModule.cs" />
-    <Compile Include="Engine\IProfilerSession.cs" />
-    <Compile Include="Engine\IUpdateHandler.cs" />
-    <Compile Include="Engine\RegistrationExtensions.cs" />
-    <Compile Include="Engine\Session\ActionEvent.cs" />
-    <Compile Include="Engine\Session\ActiveItemRepository.cs" />
-    <Compile Include="Engine\Session\ApplicationEventDispatcher.cs" />
-    <Compile Include="Engine\Session\IApplicationEventBus.cs" />
-    <Compile Include="Engine\Session\IApplicationEventDispatcher.cs" />
-    <Compile Include="Engine\Session\IMessageDispatcher.cs" />
-    <Compile Include="Engine\Session\MessageDispatcher.cs" />
-    <Compile Include="Engine\Session\ProfilerSession.cs" />
-    <Compile Include="Engine\Updaters\ComponentAddedHandler.cs" />
-    <Compile Include="Engine\Updaters\InstanceLookupHandler.cs" />
-    <Compile Include="Engine\Updaters\LifetimeScopeHandler.cs" />
-    <Compile Include="Engine\Updaters\ProfilerConnectedHandler.cs" />
-    <Compile Include="Engine\Updaters\RegistrationSourceAddedHandler.cs" />
-    <Compile Include="Engine\Updaters\ResolveOperationHandler.cs" />
-    <Compile Include="Engine\Updaters\TypeDiscoveredHandler.cs" />
-    <Compile Include="Engine\Util\ConcurrentList.cs" />
-    <Compile Include="Engine\Util\GenericRegistrationSourceDescriptionFormatter.cs" />
-    <Compile Include="Engine\Util\TypeNameParser.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Source\IdTracker.cs" />
-    <Compile Include="Source\ModelMapper.cs" />
-    <Compile Include="AnalysisModule.cs" />
-    <Compile Include="Transport\Connector\Constants.cs" />
-    <Compile Include="Transport\Connector\InProcQueue.cs" />
-    <Compile Include="Transport\Connector\IReadQueue.cs" />
-    <Compile Include="Transport\Connector\IWriteQueue.cs" />
-    <Compile Include="Transport\Connector\NamedPipesWriteQueue.cs" />
-    <Compile Include="Transport\Connector\NullQueue.cs" />
-    <Compile Include="Transport\Messages\ComponentAddedMessage.cs" />
-    <Compile Include="Transport\Messages\InstanceLookupBeginningMessage.cs" />
-    <Compile Include="Transport\Messages\InstanceLookupCompletionBeginningMessage.cs" />
-    <Compile Include="Transport\Messages\InstanceLookupCompletionEndingMessage.cs" />
-    <Compile Include="Transport\Messages\InstanceLookupEndingMessage.cs" />
-    <Compile Include="Transport\Messages\LifetimeScopeBeginningMessage.cs" />
-    <Compile Include="Transport\Messages\LifetimeScopeEndingMessage.cs" />
-    <Compile Include="Transport\Messages\ProfilerConnectedMessage.cs" />
-    <Compile Include="Transport\Messages\RegistrationSourceAddedMessage.cs" />
-    <Compile Include="Transport\Messages\ResolveOperationBeginningMessage.cs" />
-    <Compile Include="Transport\Messages\ResolveOperationEndingMessage.cs" />
-    <Compile Include="Transport\Messages\TypeDiscoveredMessage.cs" />
-    <Compile Include="Transport\Model\ActivatorModel.cs" />
-    <Compile Include="Transport\Model\ComponentModel.cs" />
-    <Compile Include="Transport\Model\InstanceLookupModel.cs" />
-    <Compile Include="Transport\Model\LifetimeModel.cs" />
-    <Compile Include="Transport\Model\LifetimeScopeModel.cs" />
-    <Compile Include="Transport\Model\OwnershipModel.cs" />
-    <Compile Include="Transport\Model\ParameterModel.cs" />
-    <Compile Include="Transport\Model\RegistrationSourceModel.cs" />
-    <Compile Include="Transport\Model\ResolveOperationModel.cs" />
-    <Compile Include="Transport\Model\ServiceModel.cs" />
-    <Compile Include="Transport\Model\SharingModel.cs" />
-    <Compile Include="Transport\Model\TypeModel.cs" />
-    <Compile Include="Transport\Util\Disposable.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup />
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
 </Project>

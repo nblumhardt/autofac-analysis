@@ -1,6 +1,6 @@
 ﻿using System;
 using Autofac;
-using Autofac.Configuration;
+using Autofac.Analysis;
 using Autofac.Features.OwnedInstances;
 using Serilog;
 
@@ -39,12 +39,12 @@ namespace ProfiledApplication
         static void Main()
         {
             Log.Logger = new LoggerConfiguration()
-                .WriteTo.LiterateConsole()
-                .Destructure.ToMaximumDepth(100) // Hmm
+                .WriteTo.Console()
+                .Destructure.ToMaximumDepth(100) // Override the default limit of 5
                 .CreateLogger();
 
             var builder = new ContainerBuilder();
-            builder.RegisterModule(new ConfigurationSettingsReader());
+            builder.RegisterModule(new AnalysisModule());
             builder.RegisterType<A>().SingleInstance();
             builder.RegisterType<B>().PropertiesAutowired(PropertyWiringOptions.AllowCircularDependencies);
             builder.RegisterType<C>().WithMetadata("M", 42).WithMetadata("N", "B!");
