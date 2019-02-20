@@ -91,9 +91,9 @@ namespace Autofac.Analysis.Engine.Application
 
         public TypeIdentifier(string fullName, string assemblyName, Version version, string culture, string publicKeyToken, int genericArgumentCount, IEnumerable<TypeIdentifier> genericArguments, string modifiers)
         {
-            if (fullName == null) throw new ArgumentNullException("fullName");
-            if (genericArguments == null) throw new ArgumentNullException("genericArguments");
-            if (modifiers == null) throw new ArgumentNullException("modifiers");
+            if (fullName == null) throw new ArgumentNullException(nameof(fullName));
+            if (genericArguments == null) throw new ArgumentNullException(nameof(genericArguments));
+            if (modifiers == null) throw new ArgumentNullException(nameof(modifiers));
             _fullName = fullName;
             _assemblyName = assemblyName;
             _version = version;

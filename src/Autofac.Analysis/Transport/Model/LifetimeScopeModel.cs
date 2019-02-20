@@ -11,8 +11,8 @@ namespace Autofac.Analysis.Transport.Model
 
         public LifetimeScopeModel(string id, string tag, string parentLifetimeScopeId = null)
         {
-            if (id == null) throw new ArgumentNullException("id");
-            if (tag == null) throw new ArgumentNullException("tag");
+            if (id == null) throw new ArgumentNullException(nameof(id));
+            if (tag == null) throw new ArgumentNullException(nameof(tag));
             _id = id;
             _parentLifetimeScopeId = parentLifetimeScopeId;
             _tag = tag;

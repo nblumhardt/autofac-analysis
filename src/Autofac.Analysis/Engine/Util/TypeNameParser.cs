@@ -96,7 +96,7 @@ namespace Autofac.Analysis.Engine.Util
 
         public static TypeIdentifier ParseAssemblyQualifiedTypeName(string assemblyQualifiedTypeName)
         {
-            if (assemblyQualifiedTypeName == null) throw new ArgumentNullException("assemblyQualifiedTypeName");
+            if (assemblyQualifiedTypeName == null) throw new ArgumentNullException(nameof(assemblyQualifiedTypeName));
             return CompleteTypeName.Parse(assemblyQualifiedTypeName);
         }
 

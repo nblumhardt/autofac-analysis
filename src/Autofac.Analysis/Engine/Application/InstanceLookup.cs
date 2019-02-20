@@ -15,10 +15,10 @@ namespace Autofac.Analysis.Engine.Application
 
         public InstanceLookup(string id, ResolveOperation resolveOperation, LifetimeScope activationScope, Component component, InstanceLookup dependent = null)
         {
-            if (id == null) throw new ArgumentNullException("id");
-            if (resolveOperation == null) throw new ArgumentNullException("resolveOperation");
-            if (activationScope == null) throw new ArgumentNullException("activationScope");
-            if (component == null) throw new ArgumentNullException("component");
+            if (id == null) throw new ArgumentNullException(nameof(id));
+            if (resolveOperation == null) throw new ArgumentNullException(nameof(resolveOperation));
+            if (activationScope == null) throw new ArgumentNullException(nameof(activationScope));
+            if (component == null) throw new ArgumentNullException(nameof(component));
             _id = id;
             _resolveOperation = resolveOperation;
             _activationScope = activationScope;

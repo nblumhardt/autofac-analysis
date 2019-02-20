@@ -10,7 +10,7 @@ namespace Autofac.Analysis.Transport.Messages
 
         public RegistrationSourceAddedMessage(RegistrationSourceModel registrationSource)
         {
-            if (registrationSource == null) throw new ArgumentNullException("registrationSource");
+            if (registrationSource == null) throw new ArgumentNullException(nameof(registrationSource));
             _registrationSource = registrationSource;
         }
 

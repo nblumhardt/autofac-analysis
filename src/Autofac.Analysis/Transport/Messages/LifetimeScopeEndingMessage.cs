@@ -9,7 +9,7 @@ namespace Autofac.Analysis.Transport.Messages
 
         public LifetimeScopeEndingMessage(string lifetimeScopeId)
         {
-            if (lifetimeScopeId == null) throw new ArgumentNullException("lifetimeScopeId");
+            if (lifetimeScopeId == null) throw new ArgumentNullException(nameof(lifetimeScopeId));
             _lifetimeScopeId = lifetimeScopeId;
         }
 

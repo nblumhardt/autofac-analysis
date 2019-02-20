@@ -6,7 +6,7 @@
         {
             base.Load(builder);
 
-            builder.RegisterType<EventWriter>().SingleInstance();
+            builder.RegisterType<SerilogEventWriter>().SingleInstance();
         }
     }
 }

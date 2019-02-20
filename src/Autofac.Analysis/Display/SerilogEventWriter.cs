@@ -7,7 +7,7 @@ using Serilog;
 
 namespace Autofac.Analysis.Display
 {
-    sealed class EventWriter :
+    sealed class SerilogEventWriter :
         IApplicationEventHandler<MessageEvent>,
         IApplicationEventHandler<ItemCreatedEvent<ResolveOperation>>,
         IApplicationEventHandler<ItemCompletedEvent<ResolveOperation>>,
@@ -17,11 +17,11 @@ namespace Autofac.Analysis.Display
         readonly IApplicationEventBus _eventBus;
         readonly ILogger _logger;
 
-        public EventWriter(IApplicationEventBus eventBus)
+        public SerilogEventWriter(IApplicationEventBus eventBus, ILogger logger)
         {
-            if (eventBus == null) throw new ArgumentNullException("eventBus");
-            _eventBus = eventBus;
-            _logger = Log.ForContext<EventWriter>();
+            if (logger == null) throw new ArgumentNullException(nameof(logger));
+            _eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
+            _logger = logger.ForContext<SerilogEventWriter>();
         }
 
         public void Start()
@@ -31,7 +31,9 @@ namespace Autofac.Analysis.Display
 
         public void Handle(MessageEvent applicationEvent)
         {
+#pragma warning disable Serilog004 // Constant MessageTemplate verifier
             _logger.Write(applicationEvent.Level, applicationEvent.MessageTemplate, applicationEvent.Args);
+#pragma warning restore Serilog004 // Constant MessageTemplate verifier
         }
 
         public void Dispose()
@@ -71,7 +73,7 @@ namespace Autofac.Analysis.Display
 
         static object ToObjectGraph(InstanceLookup instanceLookup)
         {
-            if (instanceLookup == null) throw new ArgumentNullException("instanceLookup");
+            if (instanceLookup == null) throw new ArgumentNullException(nameof(instanceLookup));
 
             // Just hacking things to keep clutter down, needs cleaning up
 

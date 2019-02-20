@@ -16,13 +16,12 @@ namespace Autofac.Analysis.Engine.Analytics.Leaks
 
         public RootScopeLeakDetector(IApplicationEventQueue applicationEventQueue)
         {
-            if (applicationEventQueue == null) throw new ArgumentNullException("applicationEventQueue");
-            _applicationEventQueue = applicationEventQueue;
+            _applicationEventQueue = applicationEventQueue ?? throw new ArgumentNullException(nameof(applicationEventQueue));
         }
 
         public void Handle(ItemCompletedEvent<ResolveOperation> applicationEvent)
         {
-            if (applicationEvent == null) throw new ArgumentNullException("applicationEvent");
+            if (applicationEvent == null) throw new ArgumentNullException(nameof(applicationEvent));
 
             var instanceLookup = applicationEvent.Item.RootInstanceLookup;
             if (instanceLookup.SharedInstanceReused)

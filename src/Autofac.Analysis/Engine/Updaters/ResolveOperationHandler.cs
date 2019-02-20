@@ -17,9 +17,9 @@ namespace Autofac.Analysis.Engine.Updaters
             IActiveItemRepository<LifetimeScope> lifetimeScopes,
             IActiveItemRepository<Thread> threads)
         {
-            if (resolveOperations == null) throw new ArgumentNullException("resolveOperations");
-            if (lifetimeScopes == null) throw new ArgumentNullException("lifetimeScopes");
-            if (threads == null) throw new ArgumentNullException("threads");
+            if (resolveOperations == null) throw new ArgumentNullException(nameof(resolveOperations));
+            if (lifetimeScopes == null) throw new ArgumentNullException(nameof(lifetimeScopes));
+            if (threads == null) throw new ArgumentNullException(nameof(threads));
             _resolveOperations = resolveOperations;
             _lifetimeScopes = lifetimeScopes;
             _threads = threads;

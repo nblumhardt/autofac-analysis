@@ -10,7 +10,7 @@ namespace Autofac.Analysis.Transport.Messages
 
         public ResolveOperationBeginningMessage(ResolveOperationModel resolveOperation)
         {
-            if (resolveOperation == null) throw new ArgumentNullException("resolveOperation");
+            if (resolveOperation == null) throw new ArgumentNullException(nameof(resolveOperation));
             _resolveOperation = resolveOperation;
         }
 

@@ -4,6 +4,8 @@ using Autofac.Analysis;
 using Autofac.Features.OwnedInstances;
 using Serilog;
 
+// ReSharper disable UnusedTypeParameter, UnusedParameter.Local
+
 namespace ProfiledApplication
 {
     class A
@@ -30,7 +32,7 @@ namespace ProfiledApplication
     {        
     }
 
-    class G<T,U>
+    class G<T1,T2>
     {        
     }
 
@@ -38,13 +40,13 @@ namespace ProfiledApplication
     {
         static void Main()
         {
-            Log.Logger = new LoggerConfiguration()
+            var logger = new LoggerConfiguration()
                 .WriteTo.Console()
                 .Destructure.ToMaximumDepth(100) // Override the default limit of 5
                 .CreateLogger();
 
             var builder = new ContainerBuilder();
-            builder.RegisterModule(new AnalysisModule());
+            builder.RegisterModule(new AnalysisModule(logger));
             builder.RegisterType<A>().SingleInstance();
             builder.RegisterType<B>().PropertiesAutowired(PropertyWiringOptions.AllowCircularDependencies);
             builder.RegisterType<C>().WithMetadata("M", 42).WithMetadata("N", "B!");

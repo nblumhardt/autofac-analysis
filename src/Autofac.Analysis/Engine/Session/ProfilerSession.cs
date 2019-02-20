@@ -18,9 +18,9 @@ namespace Autofac.Analysis.Engine.Session
 
         public ProfilerSession(IMessageDispatcher messageDispatcher, IApplicationEventQueue applicationEventQueue, IReadQueue readQueue)
         {
-            if (messageDispatcher == null) throw new ArgumentNullException("messageDispatcher");
-            if (applicationEventQueue == null) throw new ArgumentNullException("applicationEventQueue");
-            if (readQueue == null) throw new ArgumentNullException("readQueue");
+            if (messageDispatcher == null) throw new ArgumentNullException(nameof(messageDispatcher));
+            if (applicationEventQueue == null) throw new ArgumentNullException(nameof(applicationEventQueue));
+            if (readQueue == null) throw new ArgumentNullException(nameof(readQueue));
             _messageDispatcher = messageDispatcher;
             _applicationEventQueue = applicationEventQueue;
             _readQueue = readQueue;
@@ -29,7 +29,7 @@ namespace Autofac.Analysis.Engine.Session
 
         public void BeginInvoke(Action action)
         {
-            if (action == null) throw new ArgumentNullException("action");
+            if (action == null) throw new ArgumentNullException(nameof(action));
             _applicationEventQueue.Enqueue(new ActionEvent(action));
         }
 

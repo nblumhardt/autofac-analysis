@@ -15,11 +15,11 @@ namespace Autofac.Analysis.Transport.Model
 
         public InstanceLookupModel(string id, string resolveOperationId, string componentId, string activationScopeId, IEnumerable<ParameterModel> parameters)
         {
-            if (id == null) throw new ArgumentNullException("id");
-            if (resolveOperationId == null) throw new ArgumentNullException("resolveOperationId");
-            if (componentId == null) throw new ArgumentNullException("componentId");
-            if (activationScopeId == null) throw new ArgumentNullException("activationScopeId");
-            if (parameters == null) throw new ArgumentNullException("parameters");
+            if (id == null) throw new ArgumentNullException(nameof(id));
+            if (resolveOperationId == null) throw new ArgumentNullException(nameof(resolveOperationId));
+            if (componentId == null) throw new ArgumentNullException(nameof(componentId));
+            if (activationScopeId == null) throw new ArgumentNullException(nameof(activationScopeId));
+            if (parameters == null) throw new ArgumentNullException(nameof(parameters));
             _id = id;
             _resolveOperationId = resolveOperationId;
             _componentId = componentId;

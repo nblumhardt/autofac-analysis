@@ -15,7 +15,7 @@ namespace Autofac.Analysis.Engine.Analytics.Leaks
 
         public int RecordActivation(string lifetimeScopeId)
         {
-            if (lifetimeScopeId == null) throw new ArgumentNullException("lifetimeScopeId");
+            if (lifetimeScopeId == null) throw new ArgumentNullException(nameof(lifetimeScopeId));
 
             if (_activationCounts.Contains(lifetimeScopeId))
             {

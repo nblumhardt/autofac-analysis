@@ -8,7 +8,7 @@ namespace Autofac.Analysis.Engine.Session
 
         public ActionEvent(Action action)
         {
-            if (action == null) throw new ArgumentNullException("action");
+            if (action == null) throw new ArgumentNullException(nameof(action));
             _action = action;
         }
 

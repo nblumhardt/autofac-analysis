@@ -10,7 +10,7 @@ namespace Autofac.Analysis.Transport.Messages
 
         public ProfilerConnectedMessage(string processName, int processId)
         {
-            if (processName == null) throw new ArgumentNullException("processName");
+            if (processName == null) throw new ArgumentNullException(nameof(processName));
             _processName = processName;
             _processId = processId;
         }

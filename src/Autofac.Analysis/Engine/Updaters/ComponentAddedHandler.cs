@@ -12,15 +12,15 @@ namespace Autofac.Analysis.Engine.Updaters
 
         public ComponentAddedHandler(IActiveItemRepository<Component> components, IActiveItemRepository<TypeData> types)
         {
-            if (components == null) throw new ArgumentNullException("components");
-            if (types == null) throw new ArgumentNullException("types");
+            if (components == null) throw new ArgumentNullException(nameof(components));
+            if (types == null) throw new ArgumentNullException(nameof(types));
             _components = components;
             _types = types;
         }
 
         public void UpdateFrom(ComponentAddedMessage message)
         {
-            if (message == null) throw new ArgumentNullException("message");
+            if (message == null) throw new ArgumentNullException(nameof(message));
 
             TypeData limitType;
             if (!_types.TryGetItem(message.Component.LimitTypeId, out limitType))

@@ -13,15 +13,15 @@ namespace Autofac.Analysis.Engine.Session
 
         public MessageDispatcher(IComponentContext componentContext, IApplicationEventDispatcher applicationEventDispatcher)
         {
-            if (componentContext == null) throw new ArgumentNullException("componentContext");
-            if (applicationEventDispatcher == null) throw new ArgumentNullException("applicationEventDispatcher");
+            if (componentContext == null) throw new ArgumentNullException(nameof(componentContext));
+            if (applicationEventDispatcher == null) throw new ArgumentNullException(nameof(applicationEventDispatcher));
             _componentContext = componentContext;
             _applicationEventDispatcher = applicationEventDispatcher;
         }
 
         public void DispatchMessages(IReadQueue readQueue)
         {
-            if (readQueue == null) throw new ArgumentNullException("readQueue");
+            if (readQueue == null) throw new ArgumentNullException(nameof(readQueue));
 
             object message;
             while (readQueue.TryDequeue(out message))

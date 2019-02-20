@@ -28,11 +28,11 @@ namespace Autofac.Analysis.Transport.Model
             LifetimeModel lifetime,
             ActivatorModel activator)
         {
-            if (id == null) throw new ArgumentNullException("id");
-            if (services == null) throw new ArgumentNullException("services");
-            if (limitTypeId == null) throw new ArgumentNullException("limitTypeId");
-            if (metadata == null) throw new ArgumentNullException("metadata");
-            if (targetComponentId == null) throw new ArgumentNullException("targetComponentId");
+            if (id == null) throw new ArgumentNullException(nameof(id));
+            if (services == null) throw new ArgumentNullException(nameof(services));
+            if (limitTypeId == null) throw new ArgumentNullException(nameof(limitTypeId));
+            if (metadata == null) throw new ArgumentNullException(nameof(metadata));
+            if (targetComponentId == null) throw new ArgumentNullException(nameof(targetComponentId));
             _id = id;
             _limitTypeId = limitTypeId;
             _metadata = new Dictionary<string,string>(metadata);

@@ -10,8 +10,8 @@ namespace Autofac.Analysis.Engine.Application
 
         public TypeData(string id, TypeIdentifier identity, bool isDisposable)
         {
-            if (id == null) throw new ArgumentNullException("id");
-            if (identity == null) throw new ArgumentNullException("identity");
+            if (id == null) throw new ArgumentNullException(nameof(id));
+            if (identity == null) throw new ArgumentNullException(nameof(identity));
             _id = id;
             _identity = identity;
             _isDisposable = isDisposable;

@@ -23,7 +23,7 @@ namespace Autofac.Analysis.Source
 
         public string GetComponentId(IComponentRegistration componentRegistration)
         {
-            if (componentRegistration == null) throw new ArgumentNullException("componentRegistration");
+            if (componentRegistration == null) throw new ArgumentNullException(nameof(componentRegistration));
             return componentRegistration.Id.ToString();
         }
 
@@ -58,7 +58,7 @@ namespace Autofac.Analysis.Source
 
         public ActivatorModel GetActivatorModel(IInstanceActivator activator)
         {
-            if (activator == null) throw new ArgumentNullException("activator");
+            if (activator == null) throw new ArgumentNullException(nameof(activator));
 
             if (activator is ReflectionActivator)
                 return ActivatorModel.Reflection;
@@ -74,7 +74,7 @@ namespace Autofac.Analysis.Source
 
         public LifetimeModel GetLifetimeModel(IComponentLifetime lifetime)
         {
-            if (lifetime == null) throw new ArgumentNullException("lifetime");
+            if (lifetime == null) throw new ArgumentNullException(nameof(lifetime));
 
             if (lifetime is CurrentScopeLifetime)
                 return LifetimeModel.CurrentScope;
@@ -100,7 +100,7 @@ namespace Autofac.Analysis.Source
 
         public ServiceModel GetServiceModel(Service service)
         {
-            if (service == null) throw new ArgumentNullException("service");
+            if (service == null) throw new ArgumentNullException(nameof(service));
 
             string key = null, serviceTypeId = null;
 

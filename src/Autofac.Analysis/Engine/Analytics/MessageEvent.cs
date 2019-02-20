@@ -11,8 +11,8 @@ namespace Autofac.Analysis.Engine.Analytics
 
         public MessageEvent(LogEventLevel level, string messageTemplate, params object[] args)
         {
-            if (messageTemplate == null) throw new ArgumentNullException("messageTemplate");
-            if (args == null) throw new ArgumentNullException("args");
+            if (messageTemplate == null) throw new ArgumentNullException(nameof(messageTemplate));
+            if (args == null) throw new ArgumentNullException(nameof(args));
             _level = level;
             _messageTemplate = messageTemplate;
             _args = args;

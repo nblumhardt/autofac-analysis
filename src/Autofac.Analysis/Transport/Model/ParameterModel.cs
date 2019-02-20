@@ -9,7 +9,7 @@ namespace Autofac.Analysis.Transport.Model
 
         public ParameterModel(string description)
         {
-            if (description == null) throw new ArgumentNullException("description");
+            if (description == null) throw new ArgumentNullException(nameof(description));
             _description = description;
         }
 

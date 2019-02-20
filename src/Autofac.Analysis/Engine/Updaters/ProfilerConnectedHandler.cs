@@ -15,7 +15,7 @@ namespace Autofac.Analysis.Engine.Updaters
 
         public void UpdateFrom(ProfilerConnectedMessage message)
         {
-            if (message == null) throw new ArgumentNullException("message");
+            if (message == null) throw new ArgumentNullException(nameof(message));
             _applicationEventQueue.Enqueue(new ProfilerConnectedEvent(message.ProcessName, message.ProcessId));
         }
     }

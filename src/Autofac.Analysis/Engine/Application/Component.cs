@@ -19,9 +19,9 @@ namespace Autofac.Analysis.Engine.Application
 
         public Component(string id, TypeData limitType, IEnumerable<Service> services, OwnershipModel ownership, SharingModel sharing, IDictionary<string, string> metadata, ActivatorModel activator, LifetimeModel lifetime, string targetComponentId = null)
         {
-            if (limitType == null) throw new ArgumentNullException("limitType");
-            if (services == null) throw new ArgumentNullException("services");
-            if (metadata == null) throw new ArgumentNullException("metadata");
+            if (limitType == null) throw new ArgumentNullException(nameof(limitType));
+            if (services == null) throw new ArgumentNullException(nameof(services));
+            if (metadata == null) throw new ArgumentNullException(nameof(metadata));
             _id = id;
             _limitType = limitType;
             _services = services.ToArray();

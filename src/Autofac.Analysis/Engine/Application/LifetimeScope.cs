@@ -12,7 +12,7 @@ namespace Autofac.Analysis.Engine.Application
 
         public LifetimeScope(string id, string tag = null, LifetimeScope parent = null)
         {
-            if (id == null) throw new ArgumentNullException("id");
+            if (id == null) throw new ArgumentNullException(nameof(id));
             _id = id;
             _tag = tag;
             _parent = parent;

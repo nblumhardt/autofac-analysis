@@ -23,9 +23,9 @@ namespace Autofac.Analysis.Engine.Application
 
         public ResolveOperation(string id, LifetimeScope lifetimeScope, Thread thread, ResolveOperation parent = null, MethodIdentifier callingMethod = null)
         {
-            if (id == null) throw new ArgumentNullException("id");
-            if (lifetimeScope == null) throw new ArgumentNullException("lifetimeScope");
-            if (thread == null) throw new ArgumentNullException("thread");
+            if (id == null) throw new ArgumentNullException(nameof(id));
+            if (lifetimeScope == null) throw new ArgumentNullException(nameof(lifetimeScope));
+            if (thread == null) throw new ArgumentNullException(nameof(thread));
             _id = id;
             _lifetimeScope = lifetimeScope;
             _thread = thread;

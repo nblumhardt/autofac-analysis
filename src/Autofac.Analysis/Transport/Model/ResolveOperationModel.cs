@@ -13,9 +13,9 @@ namespace Autofac.Analysis.Transport.Model
 
         public ResolveOperationModel(string id, string lifetimeScopeId, string threadId, string callingTypeAssemblyQualifiedName = null, string callingMethodName = null)
         {
-            if (id == null) throw new ArgumentNullException("id");
-            if (lifetimeScopeId == null) throw new ArgumentNullException("lifetimeScopeId");
-            if (threadId == null) throw new ArgumentNullException("threadId");
+            if (id == null) throw new ArgumentNullException(nameof(id));
+            if (lifetimeScopeId == null) throw new ArgumentNullException(nameof(lifetimeScopeId));
+            if (threadId == null) throw new ArgumentNullException(nameof(threadId));
             _id = id;
             _lifetimeScopeId = lifetimeScopeId;
             _threadId = threadId;

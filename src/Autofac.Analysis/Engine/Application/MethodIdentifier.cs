@@ -9,8 +9,8 @@ namespace Autofac.Analysis.Engine.Application
 
         public MethodIdentifier(string name, TypeIdentifier declaringTypeIdentifier)
         {
-            if (name == null) throw new ArgumentNullException("name");
-            if (declaringTypeIdentifier == null) throw new ArgumentNullException("declaringTypeIdentifier");
+            if (name == null) throw new ArgumentNullException(nameof(name));
+            if (declaringTypeIdentifier == null) throw new ArgumentNullException(nameof(declaringTypeIdentifier));
             _name = name;
             _declaringTypeIdentifier = declaringTypeIdentifier;
         }

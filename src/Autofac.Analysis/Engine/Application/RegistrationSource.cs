@@ -10,9 +10,9 @@ namespace Autofac.Analysis.Engine.Application
 
         public RegistrationSource(string id, TypeIdentifier typeIdentifier, string description)
         {
-            if (id == null) throw new ArgumentNullException("id");
-            if (typeIdentifier == null) throw new ArgumentNullException("typeIdentifier");
-            if (description == null) throw new ArgumentNullException("description");
+            if (id == null) throw new ArgumentNullException(nameof(id));
+            if (typeIdentifier == null) throw new ArgumentNullException(nameof(typeIdentifier));
+            if (description == null) throw new ArgumentNullException(nameof(description));
             _id = id;
             _typeIdentifier = typeIdentifier;
             _description = description;

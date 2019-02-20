@@ -10,7 +10,7 @@ namespace Autofac.Analysis.Engine.Application
 
         public Thread(string id)
         {
-            if (id == null) throw new ArgumentNullException("id");
+            if (id == null) throw new ArgumentNullException(nameof(id));
             _id = id;
         }
 

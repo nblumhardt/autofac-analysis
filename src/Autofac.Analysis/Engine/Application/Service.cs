@@ -10,7 +10,7 @@ namespace Autofac.Analysis.Engine.Application
         
         public Service(string description, TypeData serviceType = null, string key = null)
         {
-            if (description == null) throw new ArgumentNullException("description");
+            if (description == null) throw new ArgumentNullException(nameof(description));
             _serviceType = serviceType;
             _key = key;
 

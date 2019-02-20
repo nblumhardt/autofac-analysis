@@ -21,10 +21,10 @@ namespace Autofac.Analysis.Engine.Updaters
             IActiveItemRepository<Component> components,
             IActiveItemRepository<InstanceLookup> instanceLookups)
         {
-            if (lifetimeScopes == null) throw new ArgumentNullException("lifetimeScopes");
-            if (resolveOperations == null) throw new ArgumentNullException("resolveOperations");
-            if (components == null) throw new ArgumentNullException("components");
-            if (instanceLookups == null) throw new ArgumentNullException("instanceLookups");
+            if (lifetimeScopes == null) throw new ArgumentNullException(nameof(lifetimeScopes));
+            if (resolveOperations == null) throw new ArgumentNullException(nameof(resolveOperations));
+            if (components == null) throw new ArgumentNullException(nameof(components));
+            if (instanceLookups == null) throw new ArgumentNullException(nameof(instanceLookups));
             _lifetimeScopes = lifetimeScopes;
             _resolveOperations = resolveOperations;
             _components = components;
@@ -33,7 +33,7 @@ namespace Autofac.Analysis.Engine.Updaters
 
         public void UpdateFrom(InstanceLookupBeginningMessage e)
         {
-            if (e == null) throw new ArgumentNullException("e");
+            if (e == null) throw new ArgumentNullException(nameof(e));
             var instanceLookup = e.InstanceLookup;
             ResolveOperation resolveOperation;
             LifetimeScope activationScope;

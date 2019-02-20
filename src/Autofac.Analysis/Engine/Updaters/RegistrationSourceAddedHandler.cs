@@ -11,7 +11,7 @@ namespace Autofac.Analysis.Engine.Updaters
 
         public RegistrationSourceAddedHandler(IActiveItemRepository<RegistrationSource> registrationSources)
         {
-            if (registrationSources == null) throw new ArgumentNullException("registrationSources");
+            if (registrationSources == null) throw new ArgumentNullException(nameof(registrationSources));
             _registrationSources = registrationSources;
         }
 

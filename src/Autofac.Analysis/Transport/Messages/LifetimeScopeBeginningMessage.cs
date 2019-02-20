@@ -10,7 +10,7 @@ namespace Autofac.Analysis.Transport.Messages
 
         public LifetimeScopeBeginningMessage(LifetimeScopeModel lifetimeScope)
         {
-            if (lifetimeScope == null) throw new ArgumentNullException("lifetimeScope");
+            if (lifetimeScope == null) throw new ArgumentNullException(nameof(lifetimeScope));
             _lifetimeScope = lifetimeScope;
         }
 

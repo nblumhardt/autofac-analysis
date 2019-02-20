@@ -8,6 +8,7 @@ using Autofac.Analysis.Transport.Messages;
 using Autofac.Analysis.Transport.Model;
 using Autofac.Core;
 using Autofac.Core.Resolving;
+using Serilog;
 
 namespace Autofac.Analysis
 {
@@ -17,10 +18,14 @@ namespace Autofac.Analysis
         readonly IWriteQueue _client;
         readonly ModelMapper _modelMapper = new ModelMapper();
 
-        public AnalysisModule()
+        public AnalysisModule(ILogger outputLogger)
         {
+            if (outputLogger == null)
+                throw new ArgumentNullException(nameof(outputLogger));
+
             var client = new InProcQueue();
             var coreBuilder = new ContainerBuilder();
+            coreBuilder.RegisterInstance(outputLogger).ExternallyOwned();
             coreBuilder.RegisterModule<CoreModule>();
             coreBuilder.RegisterModule<DisplayModule>();
             coreBuilder.RegisterInstance(client).As<IReadQueue>();
@@ -82,7 +87,7 @@ namespace Autofac.Analysis
 
         public void Start(ILifetimeScope rootLifetimeScope)
         {
-            if (rootLifetimeScope == null) throw new ArgumentNullException("rootLifetimeScope");
+            if (rootLifetimeScope == null) throw new ArgumentNullException(nameof(rootLifetimeScope));
             AttachToLifetimeScope(rootLifetimeScope);
         }
 

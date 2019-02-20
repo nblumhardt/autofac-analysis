@@ -11,7 +11,7 @@ namespace Autofac.Analysis.Engine.Updaters
 
         public TypeDiscoveredHandler(IActiveItemRepository<TypeData> typeData)
         {
-            if (typeData == null) throw new ArgumentNullException("typeData");
+            if (typeData == null) throw new ArgumentNullException(nameof(typeData));
             _typeData = typeData;
         }
 

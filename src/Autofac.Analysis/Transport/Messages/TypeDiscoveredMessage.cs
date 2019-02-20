@@ -10,7 +10,7 @@ namespace Autofac.Analysis.Transport.Messages
 
         public TypeDiscoveredMessage(TypeModel typeModel)
         {
-            if (typeModel == null) throw new ArgumentNullException("typeModel");
+            if (typeModel == null) throw new ArgumentNullException(nameof(typeModel));
             _typeModel = typeModel;
         }
 

@@ -11,7 +11,7 @@ namespace Autofac.Analysis.Transport.Messages
 
         public ResolveOperationEndingMessage(string resolveOperationId, string exceptionTypeAssemblyQualifiedName = null, string exceptionMessage = null)
         {
-            if (resolveOperationId == null) throw new ArgumentNullException("resolveOperationId");
+            if (resolveOperationId == null) throw new ArgumentNullException(nameof(resolveOperationId));
             _resolveOperationId = resolveOperationId;
             _exceptionTypeAssemblyQualifiedName = exceptionTypeAssemblyQualifiedName;
             _exceptionMessage = exceptionMessage;

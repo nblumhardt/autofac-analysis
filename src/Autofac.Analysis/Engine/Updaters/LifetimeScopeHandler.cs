@@ -13,13 +13,13 @@ namespace Autofac.Analysis.Engine.Updaters
 
         public LifetimeScopeHandler(IActiveItemRepository<LifetimeScope> lifetimeScopes)
         {
-            if (lifetimeScopes == null) throw new ArgumentNullException("lifetimeScopes");
+            if (lifetimeScopes == null) throw new ArgumentNullException(nameof(lifetimeScopes));
             _lifetimeScopes = lifetimeScopes;
         }
 
         public void UpdateFrom(LifetimeScopeBeginningMessage message)
         {
-            if (message == null) throw new ArgumentNullException("message");
+            if (message == null) throw new ArgumentNullException(nameof(message));
 
             LifetimeScope parent = null;
             if (message.LifetimeScope.ParentLifetimeScopeId != null)

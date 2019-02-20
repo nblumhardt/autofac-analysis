@@ -11,8 +11,8 @@ namespace Autofac.Analysis.Transport.Model
 
         public TypeModel(string id, string assemblyQualifiedName, bool isDisposable)
         {
-            if (id == null) throw new ArgumentNullException("id");
-            if (assemblyQualifiedName == null) throw new ArgumentNullException("assemblyQualifiedName");
+            if (id == null) throw new ArgumentNullException(nameof(id));
+            if (assemblyQualifiedName == null) throw new ArgumentNullException(nameof(assemblyQualifiedName));
             _id = id;
             _assemblyQualifiedName = assemblyQualifiedName;
             _isDisposable = isDisposable;

@@ -11,9 +11,9 @@ namespace Autofac.Analysis.Transport.Model
 
         public RegistrationSourceModel(string id, string typeAssemblyQualifiedName, string description)
         {
-            if (id == null) throw new ArgumentNullException("id");
-            if (typeAssemblyQualifiedName == null) throw new ArgumentNullException("typeAssemblyQualifiedName");
-            if (description == null) throw new ArgumentNullException("description");
+            if (id == null) throw new ArgumentNullException(nameof(id));
+            if (typeAssemblyQualifiedName == null) throw new ArgumentNullException(nameof(typeAssemblyQualifiedName));
+            if (description == null) throw new ArgumentNullException(nameof(description));
             _id = id;
             _typeAssemblyQualifiedName = typeAssemblyQualifiedName;
             _description = description;
