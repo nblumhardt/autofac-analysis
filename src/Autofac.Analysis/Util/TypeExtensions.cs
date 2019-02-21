@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Autofac.Analysis.Transport.Util
+namespace Autofac.Analysis.Util
 {
     static class TypeExtensions
     {

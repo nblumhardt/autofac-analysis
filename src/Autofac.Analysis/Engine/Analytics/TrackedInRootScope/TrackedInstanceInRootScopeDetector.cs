@@ -28,9 +28,11 @@ namespace Autofac.Analysis.Engine.Analytics.TrackedInRootScope
             if (component.IsTracked && component.Sharing != SharingModel.Shared)
             {
                 var messageEvent = new MessageEvent(LogEventLevel.Warning,
-                    "{AnalysisCode} The tracked/`IDisposable`, non-shared component {ComponentId}, {ComponentDescription}, was activated in the root scope. This often indicates a memory leak.",
+                    "{AnalysisCode} The tracked/`IDisposable`, non-shared component {ComponentId}, {ComponentDescription}, was activated in the root scope in resolve operation {ResolveOperationId}. This often indicates a memory leak.",
                     AnalysisCodes.TrackedInRootScope,
-                    component.Id, component.Description);
+                    component.Id,
+                    component.Description,
+                    applicationEvent.Item.ResolveOperation.Id);
                 _applicationEventQueue.Enqueue(messageEvent);
             }
         }

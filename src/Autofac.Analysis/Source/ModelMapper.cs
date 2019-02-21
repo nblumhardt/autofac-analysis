@@ -128,8 +128,12 @@ namespace Autofac.Analysis.Source
                         if (i < frames.Length - 1 && dt.Assembly == typeof(ContainerBuilder).Assembly)
                         {
                             var ri = i + 1;
-                            while (ri < frames.Length && frames[ri].GetMethod().DeclaringType == null)
+                            while (ri < frames.Length &&
+                                   (frames[ri].GetMethod().DeclaringType == null ||
+                                    frames[ri].GetMethod().DeclaringType.Assembly.FullName.StartsWith("Microsoft.Extensions.DependencyInjection")))
+                            {
                                 ri++;
+                            }
 
                             if (ri < frames.Length)
                                 return frames[ri].GetMethod();

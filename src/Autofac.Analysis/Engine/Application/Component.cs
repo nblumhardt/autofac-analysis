@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Autofac.Analysis.Transport.Model;
-using Autofac.Analysis.Transport.Util;
+using Autofac.Analysis.Util;
 
 namespace Autofac.Analysis.Engine.Application
 {

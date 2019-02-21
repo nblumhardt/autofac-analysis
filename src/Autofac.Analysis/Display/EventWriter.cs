@@ -129,7 +129,7 @@ namespace Autofac.Analysis.Display
 
         public void Handle(ProfilerConnectedEvent applicationEvent)
         {
-            _logger.Information("Autofac analysis module connected, {Name}, {Id}", applicationEvent.Name, applicationEvent.Id);
+            _logger.Information("Autofac analysis module connected in {Executable} ({ProcessId})", applicationEvent.Name, applicationEvent.Id);
         }
     }
 }
