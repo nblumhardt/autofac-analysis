@@ -6,7 +6,7 @@ using Serilog;
 
 // ReSharper disable UnusedTypeParameter, UnusedParameter.Local
 
-namespace ProfiledApplication
+namespace ConsoleApplication
 {
     class A
     {

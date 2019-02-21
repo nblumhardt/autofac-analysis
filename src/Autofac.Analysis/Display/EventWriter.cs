@@ -8,6 +8,7 @@ using Serilog;
 namespace Autofac.Analysis.Display
 {
     sealed class EventWriter :
+        IApplicationEventHandler<ProfilerConnectedEvent>,
         IApplicationEventHandler<MessageEvent>,
         IApplicationEventHandler<ItemCreatedEvent<ResolveOperation>>,
         IApplicationEventHandler<ItemCompletedEvent<ResolveOperation>>,
@@ -124,6 +125,11 @@ namespace Autofac.Analysis.Display
                 Scope = instanceLookup.ActivationScope.Description,
                 Dependencies = instanceLookup.DependencyLookups.Select(ToObjectGraph).ToArray()
             };
+        }
+
+        public void Handle(ProfilerConnectedEvent applicationEvent)
+        {
+            _logger.Information("Autofac analysis module connected, {Name}, {Id}", applicationEvent.Name, applicationEvent.Id);
         }
     }
 }

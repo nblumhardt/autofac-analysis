@@ -5,13 +5,14 @@ using Microsoft.AspNetCore.Hosting;
 using Serilog;
 using Serilog.Sinks.SystemConsole.Themes;
 
-namespace WebApplication
+namespace MvcApplication
 {
     public class Program
     {
         public static void Main(string[] args)
         {
             Log.Logger = new LoggerConfiguration()
+                .Destructure.ToMaximumDepth(100) // Override the default limit of 5
                 .WriteTo.Console(theme: AnsiConsoleTheme.Code)
                 .WriteTo.Seq("http://localhost:5341")
                 .CreateLogger();
