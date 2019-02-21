@@ -120,29 +120,29 @@ namespace Autofac.Analysis.Source
             {
                 var f = frames[i];
                 var m = f.GetMethod();
-                if (m != null)
+                if (m == null)
+                    continue;
+
+                var dt = m.DeclaringType;
+                if (dt == null)
+                    continue;
+
+                if (i >= frames.Length - 1 || dt.Assembly != typeof(ContainerBuilder).Assembly)
+                    continue;
+
+                var ri = i + 1;
+                while (ri < frames.Length)
                 {
-                    var dt = m.DeclaringType;
-                    if (dt != null)
-                    {
-                        if (i < frames.Length - 1 && dt.Assembly == typeof(ContainerBuilder).Assembly)
-                        {
-                            var ri = i + 1;
-                            while (ri < frames.Length)
-                            {
-                                var mdt = frames[ri].GetMethod().DeclaringType;
-                                if (mdt == null ||
-                                    mdt.Assembly.FullName.StartsWith("Microsoft.Extensions.DependencyInjection"))
-                                    break;
+                    var mdt = frames[ri].GetMethod().DeclaringType;
+                    if (mdt == null ||
+                        mdt.Assembly.FullName.StartsWith("Microsoft.Extensions.DependencyInjection"))
+                        break;
 
-                                ri++;
-                            }
-
-                            if (ri < frames.Length)
-                                return frames[ri].GetMethod();
-                        }
-                    }
+                    ri++;
                 }
+
+                if (ri < frames.Length)
+                    return frames[ri].GetMethod();
             }
 
             return null;
