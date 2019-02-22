@@ -1,4 +1,4 @@
-# `Autofac.Analysis`
+# `Autofac.Analysis` [![NuGet package](https://img.shields.io/nuget/vpre/autofac.analysis.svg)](https://nuget.org/packages/autofac.analysis) [![Build status](https://ci.appveyor.com/api/projects/status/r0a0n6b17080we1i?svg=true)](https://ci.appveyor.com/project/NicholasBlumhardt/autofac-analysis)
 
 Log and analyze runtime operations on an [Autofac](https://autofac.org) container.
 
