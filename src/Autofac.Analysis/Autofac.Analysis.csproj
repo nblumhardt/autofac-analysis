@@ -1,13 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Description>Runtime analysis of Autofac container events</Description>
+    <Description>Log and analyze runtime operations on an Autofac container.</Description>
     <VersionPrefix>1.0.0</VersionPrefix>
     <Authors>Autofac Contributors</Authors>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <PackageTags>autofac</PackageTags>
-    <PackageProjectUrl>https://github.com/autofac/autofac-analysis</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/nblumhardt/autofac-analysis</PackageProjectUrl>
     <PackageLicenseUrl>https://opensource.org/licenses/mit-license.php</PackageLicenseUrl>
-    <RepositoryUrl>https://github.com/autofac/autofac-analysis</RepositoryUrl>
+    <PackageIconUrl>https://cloud.githubusercontent.com/assets/1156571/13684110/16b8f152-e6bf-11e5-84ae-22c66c6d351a.png</PackageIconUrl>
+    <RepositoryUrl>https://github.com/nblumhardt/autofac-analysis</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
   </PropertyGroup>
