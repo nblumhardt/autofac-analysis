@@ -6,16 +6,11 @@ namespace Autofac.Analysis.Transport.Messages
     [Serializable]
     public class ComponentAddedMessage
     {
-        readonly ComponentModel _component;
-
         public ComponentAddedMessage(ComponentModel component)
         {
-            _component = component;
+            Component = component;
         }
 
-        public ComponentModel Component
-        {
-            get { return _component; }
-        }
+        public ComponentModel Component { get; }
     }
 }

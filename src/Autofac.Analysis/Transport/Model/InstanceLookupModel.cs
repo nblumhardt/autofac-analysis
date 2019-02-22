@@ -4,52 +4,26 @@ using System.Linq;
 
 namespace Autofac.Analysis.Transport.Model
 {
-    [Serializable]
     public class InstanceLookupModel
     {
-        readonly string _id;
-        readonly string _resolveOperationId;
-        readonly string _componentId;
-        readonly string _activationScopeId;
-        readonly IEnumerable<ParameterModel> _parameters;
-
         public InstanceLookupModel(string id, string resolveOperationId, string componentId, string activationScopeId, IEnumerable<ParameterModel> parameters)
         {
-            if (id == null) throw new ArgumentNullException("id");
-            if (resolveOperationId == null) throw new ArgumentNullException("resolveOperationId");
-            if (componentId == null) throw new ArgumentNullException("componentId");
-            if (activationScopeId == null) throw new ArgumentNullException("activationScopeId");
-            if (parameters == null) throw new ArgumentNullException("parameters");
-            _id = id;
-            _resolveOperationId = resolveOperationId;
-            _componentId = componentId;
-            _activationScopeId = activationScopeId;
-            _parameters = parameters.ToArray();
+            if (parameters == null) throw new ArgumentNullException(nameof(parameters));
+            Id = id ?? throw new ArgumentNullException(nameof(id));
+            ResolveOperationId = resolveOperationId ?? throw new ArgumentNullException(nameof(resolveOperationId));
+            ComponentId = componentId ?? throw new ArgumentNullException(nameof(componentId));
+            ActivationScopeId = activationScopeId ?? throw new ArgumentNullException(nameof(activationScopeId));
+            Parameters = parameters.ToArray();
         }
 
-        public string Id
-        {
-            get { return _id; }
-        }
+        public string Id { get; }
 
-        public string ActivationScopeId
-        {
-            get { return _activationScopeId; }
-        }
+        public string ActivationScopeId { get; }
 
-        public IEnumerable<ParameterModel> Parameters
-        {
-            get { return _parameters; }
-        }
+        public IEnumerable<ParameterModel> Parameters { get; }
 
-        public string ComponentId
-        {
-            get { return _componentId; }
-        }
+        public string ComponentId { get; }
 
-        public string ResolveOperationId
-        {
-            get { return _resolveOperationId; }
-        }
+        public string ResolveOperationId { get; }
     }
 }

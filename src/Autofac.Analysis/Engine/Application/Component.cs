@@ -2,93 +2,55 @@
 using System.Collections.Generic;
 using System.Linq;
 using Autofac.Analysis.Transport.Model;
+using Autofac.Analysis.Util;
 
 namespace Autofac.Analysis.Engine.Application
 {
     public class Component : IApplicationItem
     {
-        readonly string _id;
-        readonly TypeData _limitType;
-        readonly IEnumerable<Service> _services;
-        readonly OwnershipModel _ownership;
-        readonly SharingModel _sharing;
-        readonly IDictionary<string, string> _metadata;
-        readonly ActivatorModel _activator;
-        readonly LifetimeModel _lifetime;
-        readonly string _targetComponentId;
-
-        public Component(string id, TypeData limitType, IEnumerable<Service> services, OwnershipModel ownership, SharingModel sharing, IDictionary<string, string> metadata, ActivatorModel activator, LifetimeModel lifetime, string targetComponentId = null)
+        public Component(string id, Type limitType, IEnumerable<Service> services, OwnershipModel ownership, SharingModel sharing, IDictionary<string, string> metadata, ActivatorModel activator, LifetimeModel lifetime, string targetComponentId = null)
         {
-            if (limitType == null) throw new ArgumentNullException("limitType");
-            if (services == null) throw new ArgumentNullException("services");
-            if (metadata == null) throw new ArgumentNullException("metadata");
-            _id = id;
-            _limitType = limitType;
-            _services = services.ToArray();
-            _ownership = ownership;
-            _sharing = sharing;
-            _metadata = metadata;
-            _activator = activator;
-            _lifetime = lifetime;
-            _targetComponentId = targetComponentId;
+            if (services == null) throw new ArgumentNullException(nameof(services));
+            Id = id;
+            LimitType = limitType ?? throw new ArgumentNullException(nameof(limitType));
+            Services = services.ToArray();
+            Ownership = ownership;
+            Sharing = sharing;
+            Metadata = metadata ?? throw new ArgumentNullException(nameof(metadata));
+            Activator = activator;
+            Lifetime = lifetime;
+            TargetComponentId = targetComponentId;
         }
 
-        public string TargetComponentId
-        {
-            get { return _targetComponentId; }
-        }
+        public string TargetComponentId { get; }
 
-        public LifetimeModel Lifetime
-        {
-            get { return _lifetime; }
-        }
+        public LifetimeModel Lifetime { get; }
 
-        public ActivatorModel Activator
-        {
-            get { return _activator; }
-        }
+        public ActivatorModel Activator { get; }
 
-        public SharingModel Sharing
-        {
-            get { return _sharing; }
-        }
+        public SharingModel Sharing { get; }
 
-        public OwnershipModel Ownership
-        {
-            get { return _ownership; }
-        }
+        public OwnershipModel Ownership { get; }
 
-        public IEnumerable<Service> Services
-        {
-            get { return _services; }
-        }
+        public IEnumerable<Service> Services { get; }
 
-        public TypeData LimitType
-        {
-            get { return _limitType; }
-        }
+        public Type LimitType { get; }
 
-        public string Id { get { return _id; } }
+        public string Id { get; }
 
         public string Description
         {
             get
             {
-                if (LimitType.Identity.DisplayName != typeof(object).Name)
-                    return LimitType.Identity.DisplayFullName;
+                if (LimitType != typeof(object))
+                    return LimitType.ToString();
 
-                return "Unknown (" + string.Join(", ", Services.Select(s => s.ServiceType.Identity.DisplayName)) + ")";
+                return "Unknown (" + string.Join(", ", Services.Select(s => s.ServiceType)) + ")";
             }
         }
 
-        public bool IsTracked
-        {
-            get { return LimitType.IsDisposable && Ownership == OwnershipModel.OwnedByLifetimeScope; }
-        }
+        public bool IsTracked => LimitType.IsDisposable() && Ownership == OwnershipModel.OwnedByLifetimeScope;
 
-        public IDictionary<string, string> Metadata
-        {
-            get { return _metadata; }
-        }
+        public IDictionary<string, string> Metadata { get; }
     }
 }

@@ -18,18 +18,15 @@ namespace Autofac.Analysis.Engine.Session
 
         public ProfilerSession(IMessageDispatcher messageDispatcher, IApplicationEventQueue applicationEventQueue, IReadQueue readQueue)
         {
-            if (messageDispatcher == null) throw new ArgumentNullException("messageDispatcher");
-            if (applicationEventQueue == null) throw new ArgumentNullException("applicationEventQueue");
-            if (readQueue == null) throw new ArgumentNullException("readQueue");
-            _messageDispatcher = messageDispatcher;
-            _applicationEventQueue = applicationEventQueue;
-            _readQueue = readQueue;
+            _messageDispatcher = messageDispatcher ?? throw new ArgumentNullException(nameof(messageDispatcher));
+            _applicationEventQueue = applicationEventQueue ?? throw new ArgumentNullException(nameof(applicationEventQueue));
+            _readQueue = readQueue ?? throw new ArgumentNullException(nameof(readQueue));
             _timer = new Timer(Update, null, Timeout.Infinite, Timeout.Infinite);
         }
 
         public void BeginInvoke(Action action)
         {
-            if (action == null) throw new ArgumentNullException("action");
+            if (action == null) throw new ArgumentNullException(nameof(action));
             _applicationEventQueue.Enqueue(new ActionEvent(action));
         }
 

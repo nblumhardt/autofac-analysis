@@ -1,51 +1,27 @@
 ﻿using System;
+using System.Reflection;
 
 namespace Autofac.Analysis.Transport.Model
 {
-    [Serializable]
     public class ResolveOperationModel
     {
-        readonly string _id;
-        readonly string _lifetimeScopeId;
-        readonly string _threadId;
-        readonly string _callingTypeAssemblyQualifiedName;
-        readonly string _callingMethodName;
-
-        public ResolveOperationModel(string id, string lifetimeScopeId, string threadId, string callingTypeAssemblyQualifiedName = null, string callingMethodName = null)
+        public ResolveOperationModel(string id, string lifetimeScopeId, int managedThreadId, Type callingType = null, MethodBase callingMethod = null)
         {
-            if (id == null) throw new ArgumentNullException("id");
-            if (lifetimeScopeId == null) throw new ArgumentNullException("lifetimeScopeId");
-            if (threadId == null) throw new ArgumentNullException("threadId");
-            _id = id;
-            _lifetimeScopeId = lifetimeScopeId;
-            _threadId = threadId;
-            _callingTypeAssemblyQualifiedName = callingTypeAssemblyQualifiedName;
-            _callingMethodName = callingMethodName;
+            Id = id ?? throw new ArgumentNullException(nameof(id));
+            LifetimeScopeId = lifetimeScopeId ?? throw new ArgumentNullException(nameof(lifetimeScopeId));
+            ManagedThreadId = managedThreadId;
+            CallingType = callingType;
+            CallingMethod = callingMethod;
         }
 
-        public string ThreadId
-        {
-            get { return _threadId; }
-        }
+        public int ManagedThreadId { get; }
 
-        public string CallingMethodName
-        {
-            get { return _callingMethodName; }
-        }
+        public MethodBase CallingMethod { get; }
 
-        public string CallingTypeAssemblyQualifiedName
-        {
-            get { return _callingTypeAssemblyQualifiedName; }
-        }
+        public Type CallingType { get; }
 
-        public string LifetimeScopeId
-        {
-            get { return _lifetimeScopeId; }
-        }
+        public string LifetimeScopeId { get; }
 
-        public string Id
-        {
-            get { return _id; }
-        }
+        public string Id { get; }
     }
 }

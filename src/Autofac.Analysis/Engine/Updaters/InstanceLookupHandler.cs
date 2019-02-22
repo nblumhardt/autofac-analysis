@@ -21,26 +21,19 @@ namespace Autofac.Analysis.Engine.Updaters
             IActiveItemRepository<Component> components,
             IActiveItemRepository<InstanceLookup> instanceLookups)
         {
-            if (lifetimeScopes == null) throw new ArgumentNullException("lifetimeScopes");
-            if (resolveOperations == null) throw new ArgumentNullException("resolveOperations");
-            if (components == null) throw new ArgumentNullException("components");
-            if (instanceLookups == null) throw new ArgumentNullException("instanceLookups");
-            _lifetimeScopes = lifetimeScopes;
-            _resolveOperations = resolveOperations;
-            _components = components;
-            _instanceLookups = instanceLookups;
+            _lifetimeScopes = lifetimeScopes ?? throw new ArgumentNullException(nameof(lifetimeScopes));
+            _resolveOperations = resolveOperations ?? throw new ArgumentNullException(nameof(resolveOperations));
+            _components = components ?? throw new ArgumentNullException(nameof(components));
+            _instanceLookups = instanceLookups ?? throw new ArgumentNullException(nameof(instanceLookups));
         }
 
         public void UpdateFrom(InstanceLookupBeginningMessage e)
         {
-            if (e == null) throw new ArgumentNullException("e");
+            if (e == null) throw new ArgumentNullException(nameof(e));
             var instanceLookup = e.InstanceLookup;
-            ResolveOperation resolveOperation;
-            LifetimeScope activationScope;
-            Component component;
-            if (!_resolveOperations.TryGetItem(instanceLookup.ResolveOperationId, out resolveOperation) ||
-                !_lifetimeScopes.TryGetItem(instanceLookup.ActivationScopeId, out activationScope) ||
-                !_components.TryGetItem(instanceLookup.ComponentId, out component))
+            if (!_resolveOperations.TryGetItem(instanceLookup.ResolveOperationId, out var resolveOperation) ||
+                !_lifetimeScopes.TryGetItem(instanceLookup.ActivationScopeId, out var activationScope) ||
+                !_components.TryGetItem(instanceLookup.ComponentId, out var component))
                 throw new InvalidOperationException("Instance lookup depends on an unknown item.");
 
             InstanceLookup item;
@@ -62,8 +55,7 @@ namespace Autofac.Analysis.Engine.Updaters
 
         public void UpdateFrom(InstanceLookupEndingMessage e)
         {
-            InstanceLookup instanceLookup;
-            if (!_instanceLookups.TryGetItem(e.InstanceLookupId, out instanceLookup))
+            if (!_instanceLookups.TryGetItem(e.InstanceLookupId, out var instanceLookup))
                 throw new InvalidOperationException("Instance lookup ending is unknown.");
 
             var popped = instanceLookup.ResolveOperation.InstanceLookupStack.Pop();
@@ -76,8 +68,7 @@ namespace Autofac.Analysis.Engine.Updaters
 
         public void UpdateFrom(InstanceLookupCompletionBeginningMessage applicationEvent)
         {
-            InstanceLookup instanceLookup;
-            if (!_instanceLookups.TryGetItem(applicationEvent.InstanceLookupId, out instanceLookup))
+            if (!_instanceLookups.TryGetItem(applicationEvent.InstanceLookupId, out var instanceLookup))
                 throw new InvalidOperationException("Instance lookup completing is unknown.");
 
             instanceLookup.ResolveOperation.InstanceLookupStack.Push(instanceLookup);
@@ -85,8 +76,7 @@ namespace Autofac.Analysis.Engine.Updaters
 
         public void UpdateFrom(InstanceLookupCompletionEndingMessage applicationEvent)
         {
-            InstanceLookup instanceLookup;
-            if (!_instanceLookups.TryGetItem(applicationEvent.InstanceLookupId, out instanceLookup))
+            if (!_instanceLookups.TryGetItem(applicationEvent.InstanceLookupId, out var instanceLookup))
                 throw new InvalidOperationException("Instance lookup completion ending is unknown.");
 
             var popped = instanceLookup.ResolveOperation.InstanceLookupStack.Pop();

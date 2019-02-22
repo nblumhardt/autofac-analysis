@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace Autofac.Analysis.Engine.Application
 {
@@ -12,66 +13,31 @@ namespace Autofac.Analysis.Engine.Application
     /// </summary>
     public class ResolveOperation : IApplicationItem
     {
-        readonly string _id;
-        readonly LifetimeScope _lifetimeScope;
-        readonly Thread _thread;
-        readonly ResolveOperation _parent;
-        readonly MethodIdentifier _callingMethod;
-        readonly Stack<InstanceLookup> _instanceLookupStack = new Stack<InstanceLookup>();
-        readonly IList<ResolveOperation> _subOperations = new List<ResolveOperation>();
-        InstanceLookup _rootInstanceLookup;
-
-        public ResolveOperation(string id, LifetimeScope lifetimeScope, Thread thread, ResolveOperation parent = null, MethodIdentifier callingMethod = null)
+        public ResolveOperation(string id, LifetimeScope lifetimeScope, Thread thread, ResolveOperation parent = null, Type callingType = null, MethodBase callingMethod = null)
         {
-            if (id == null) throw new ArgumentNullException("id");
-            if (lifetimeScope == null) throw new ArgumentNullException("lifetimeScope");
-            if (thread == null) throw new ArgumentNullException("thread");
-            _id = id;
-            _lifetimeScope = lifetimeScope;
-            _thread = thread;
-            _parent = parent;
-            _callingMethod = callingMethod;
+            Id = id ?? throw new ArgumentNullException(nameof(id));
+            LifetimeScope = lifetimeScope ?? throw new ArgumentNullException(nameof(lifetimeScope));
+            Thread = thread ?? throw new ArgumentNullException(nameof(thread));
+            Parent = parent;
+            CallingType = callingType;
+            CallingMethod = callingMethod;
         }
 
-        public ResolveOperation Parent
-        {
-            get { return _parent; }
-        }
+        public ResolveOperation Parent { get; }
 
-        public Thread Thread
-        {
-            get { return _thread; }
-        }
+        public Thread Thread { get; }
 
-        public MethodIdentifier CallingMethod
-        {
-            get { return _callingMethod; }
-        }
+        public Type CallingType { get; }
+        public MethodBase CallingMethod { get; }
 
-        public LifetimeScope LifetimeScope
-        {
-            get { return _lifetimeScope; }
-        }
+        public LifetimeScope LifetimeScope { get; }
 
-        public string Id
-        {
-            get { return _id; }
-        }
+        public string Id { get; }
 
-        public InstanceLookup RootInstanceLookup
-        {
-            get { return _rootInstanceLookup; }
-            set { _rootInstanceLookup = value; }
-        }
+        public InstanceLookup RootInstanceLookup { get; set; }
 
-        public Stack<InstanceLookup> InstanceLookupStack
-        {
-            get { return _instanceLookupStack; }
-        }
+        public Stack<InstanceLookup> InstanceLookupStack { get; } = new Stack<InstanceLookup>();
 
-        public IList<ResolveOperation> SubOperations
-        {
-            get { return _subOperations; }
-        }
+        public IList<ResolveOperation> SubOperations { get; } = new List<ResolveOperation>();
     }
 }

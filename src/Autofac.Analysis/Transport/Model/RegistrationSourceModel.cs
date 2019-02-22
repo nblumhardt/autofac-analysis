@@ -2,36 +2,19 @@
 
 namespace Autofac.Analysis.Transport.Model
 {
-    [Serializable]
     public class RegistrationSourceModel
     {
-        readonly string _id;
-        readonly string _typeAssemblyQualifiedName;
-        readonly string _description;
-
-        public RegistrationSourceModel(string id, string typeAssemblyQualifiedName, string description)
+        public RegistrationSourceModel(string id, Type type, string description)
         {
-            if (id == null) throw new ArgumentNullException("id");
-            if (typeAssemblyQualifiedName == null) throw new ArgumentNullException("typeAssemblyQualifiedName");
-            if (description == null) throw new ArgumentNullException("description");
-            _id = id;
-            _typeAssemblyQualifiedName = typeAssemblyQualifiedName;
-            _description = description;
+            Id = id ?? throw new ArgumentNullException(nameof(id));
+            Type = type;
+            Description = description ?? throw new ArgumentNullException(nameof(description));
         }
 
-        public string TypeAssemblyQualifiedName
-        {
-            get { return _typeAssemblyQualifiedName; }
-        }
+        public Type Type { get; }
 
-        public string Description
-        {
-            get { return _description; }
-        }
+        public string Description { get; }
 
-        public string Id
-        {
-            get { return _id; }
-        }
+        public string Id { get; }
     }
 }

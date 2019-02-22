@@ -5,17 +5,11 @@ namespace Autofac.Analysis.Transport.Messages
     [Serializable]
     public class LifetimeScopeEndingMessage
     {
-        readonly string _lifetimeScopeId;
-
         public LifetimeScopeEndingMessage(string lifetimeScopeId)
         {
-            if (lifetimeScopeId == null) throw new ArgumentNullException("lifetimeScopeId");
-            _lifetimeScopeId = lifetimeScopeId;
+            LifetimeScopeId = lifetimeScopeId ?? throw new ArgumentNullException(nameof(lifetimeScopeId));
         }
 
-        public string LifetimeScopeId
-        {
-            get { return _lifetimeScopeId; }
-        }
+        public string LifetimeScopeId { get; }
     }
 }

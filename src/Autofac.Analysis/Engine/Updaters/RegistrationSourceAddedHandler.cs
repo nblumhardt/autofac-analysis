@@ -1,6 +1,5 @@
 ﻿using System;
 using Autofac.Analysis.Engine.Application;
-using Autofac.Analysis.Engine.Util;
 using Autofac.Analysis.Transport.Messages;
 
 namespace Autofac.Analysis.Engine.Updaters
@@ -11,25 +10,15 @@ namespace Autofac.Analysis.Engine.Updaters
 
         public RegistrationSourceAddedHandler(IActiveItemRepository<RegistrationSource> registrationSources)
         {
-            if (registrationSources == null) throw new ArgumentNullException("registrationSources");
-            _registrationSources = registrationSources;
+            _registrationSources = registrationSources ?? throw new ArgumentNullException(nameof(registrationSources));
         }
 
         public void UpdateFrom(RegistrationSourceAddedMessage message)
         {
             _registrationSources.Add(new RegistrationSource(
                 message.RegistrationSource.Id,
-                TypeIdentifier.Parse(message.RegistrationSource.TypeAssemblyQualifiedName),
-                FormatDescription(message.RegistrationSource.Description)));
-        }
-
-        static string FormatDescription(string description)
-        {
-            string genericDescription;
-            if (GenericRegistrationSourceDescriptionFormatter.TryFormat(description, out genericDescription))
-                return genericDescription;
-
-            return description;
+                message.RegistrationSource.Type,
+                message.RegistrationSource.Description));
         }
     }
 }

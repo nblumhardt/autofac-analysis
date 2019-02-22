@@ -5,16 +5,11 @@ namespace Autofac.Analysis.Transport.Messages
     [Serializable]
     public class InstanceLookupCompletionEndingMessage
     {
-        readonly string _instanceLookupId;
-
         public InstanceLookupCompletionEndingMessage(string instanceLookupId)
         {
-            _instanceLookupId = instanceLookupId;
+            InstanceLookupId = instanceLookupId;
         }
 
-        public string InstanceLookupId
-        {
-            get { return _instanceLookupId; }
-        }
+        public string InstanceLookupId { get; }
     }
 }

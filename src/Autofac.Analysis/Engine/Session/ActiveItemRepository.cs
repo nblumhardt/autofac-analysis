@@ -12,8 +12,7 @@ namespace Autofac.Analysis.Engine.Session
 
         public ActiveItemRepository(IApplicationEventQueue applicationEventQueue)
         {
-            if (applicationEventQueue == null) throw new ArgumentNullException("applicationEventQueue");
-            _applicationEventQueue = applicationEventQueue;
+            _applicationEventQueue = applicationEventQueue ?? throw new ArgumentNullException(nameof(applicationEventQueue));
         }
 
         public bool TryGetItem(string id, out TItem item)

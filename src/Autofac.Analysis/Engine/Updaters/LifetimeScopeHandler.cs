@@ -13,13 +13,12 @@ namespace Autofac.Analysis.Engine.Updaters
 
         public LifetimeScopeHandler(IActiveItemRepository<LifetimeScope> lifetimeScopes)
         {
-            if (lifetimeScopes == null) throw new ArgumentNullException("lifetimeScopes");
-            _lifetimeScopes = lifetimeScopes;
+            _lifetimeScopes = lifetimeScopes ?? throw new ArgumentNullException(nameof(lifetimeScopes));
         }
 
         public void UpdateFrom(LifetimeScopeBeginningMessage message)
         {
-            if (message == null) throw new ArgumentNullException("message");
+            if (message == null) throw new ArgumentNullException(nameof(message));
 
             LifetimeScope parent = null;
             if (message.LifetimeScope.ParentLifetimeScopeId != null)
@@ -41,8 +40,7 @@ namespace Autofac.Analysis.Engine.Updaters
 
         public void UpdateFrom(LifetimeScopeEndingMessage message)
         {
-            LifetimeScope lifetimeScope;
-            if (_lifetimeScopes.TryGetItem(message.LifetimeScopeId, out lifetimeScope))
+            if (_lifetimeScopes.TryGetItem(message.LifetimeScopeId, out var lifetimeScope))
             {
                 if (lifetimeScope.Parent != null)
                     lifetimeScope.Parent.ActiveChildren.Remove(lifetimeScope);

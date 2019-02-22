@@ -2,20 +2,13 @@
 
 namespace Autofac.Analysis.Transport.Model
 {
-    [Serializable]
     public class ParameterModel
     {
-        readonly string _description;
-
         public ParameterModel(string description)
         {
-            if (description == null) throw new ArgumentNullException("description");
-            _description = description;
+            Description = description ?? throw new ArgumentNullException(nameof(description));
         }
 
-        public string Description
-        {
-            get { return _description; }
-        }
+        public string Description { get; }
     }
 }

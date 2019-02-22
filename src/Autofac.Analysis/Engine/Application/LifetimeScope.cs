@@ -5,40 +5,25 @@ namespace Autofac.Analysis.Engine.Application
 {
     public class LifetimeScope : IApplicationItem
     {
-        readonly string _id;
-        readonly string _tag;
-        readonly LifetimeScope _parent;
-        readonly ICollection<LifetimeScope> _activeChildren = new HashSet<LifetimeScope>();
-
         public LifetimeScope(string id, string tag = null, LifetimeScope parent = null)
         {
-            if (id == null) throw new ArgumentNullException("id");
-            _id = id;
-            _tag = tag;
-            _parent = parent;
+            Id = id ?? throw new ArgumentNullException(nameof(id));
+            Tag = tag;
+            Parent = parent;
         }
 
-        public string Tag
-        {
-            get { return _tag; }
-        }
+        public string Tag { get; }
 
-        public LifetimeScope Parent
-        {
-            get { return _parent; }
-        }
+        public LifetimeScope Parent { get; }
 
-        public string Id
-        {
-            get { return _id; }
-        }
+        public string Id { get; }
 
         public int Level
         {
             get
             {
                 var level = 0;
-                var next = this;
+                var next = Parent;
                 while (next != null)
                 {
                     level++;
@@ -53,23 +38,17 @@ namespace Autofac.Analysis.Engine.Application
             get
             {
                 if (Tag == null)
-                    return "level " + Level;
+                    return "<level " + Level + ">";
 
                 if (Tag == "root")
-                    return "root container";
+                    return "<root>";
 
                 return Tag;
             }
         }
 
-        public bool IsRootScope
-        {
-            get { return _parent == null; }
-        }
+        public bool IsRootScope => Parent == null;
 
-        public ICollection<LifetimeScope> ActiveChildren
-        {
-            get { return _activeChildren; }
-        }
+        public ICollection<LifetimeScope> ActiveChildren { get; } = new HashSet<LifetimeScope>();
     }
 }

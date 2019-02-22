@@ -48,8 +48,7 @@ namespace Autofac.Analysis.Transport.Connector
                 if (!_clientStream.IsConnected)
                     _clientStream.Connect((int)_connectionRetryInterval.TotalMilliseconds);
 
-                object message;
-                while (_readQueue.TryDequeue(out message))
+                while (_readQueue.TryDequeue(out var message))
                 {
                     var ms = new MemoryStream();
                     _formatter.Serialize(ms, message);

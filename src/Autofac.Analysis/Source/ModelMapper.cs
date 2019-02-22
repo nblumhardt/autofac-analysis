@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
@@ -18,13 +15,10 @@ namespace Autofac.Analysis.Source
 {
     class ModelMapper
     {
-        readonly IdTracker _idTracker = new IdTracker();
-        readonly ConcurrentDictionary<Type, TypeModel> _typeModels = new ConcurrentDictionary<Type, TypeModel>();
-
         public string GetComponentId(IComponentRegistration componentRegistration)
         {
-            if (componentRegistration == null) throw new ArgumentNullException("componentRegistration");
-            return componentRegistration.Id.ToString();
+            if (componentRegistration == null) throw new ArgumentNullException(nameof(componentRegistration));
+            return componentRegistration.Id.ToString("n");
         }
 
         public ComponentModel GetComponentModel(IComponentRegistration componentRegistration)
@@ -32,7 +26,7 @@ namespace Autofac.Analysis.Source
             return new ComponentModel(
                 GetComponentId(componentRegistration),
                 componentRegistration.Services.Select(GetServiceModel),
-                GetTypeId(componentRegistration.Activator.LimitType),
+                componentRegistration.Activator.LimitType,
                 componentRegistration.Metadata.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.ToString()),
                 GetComponentId(componentRegistration.Target),
                 GetOwnershipModel(componentRegistration.Ownership),
@@ -40,25 +34,10 @@ namespace Autofac.Analysis.Source
                 GetLifetimeModel(componentRegistration.Lifetime),
                 GetActivatorModel(componentRegistration.Activator));
         }
-
-        public bool GetOrAddTypeModel(Type type, out TypeModel typeModel)
-        {
-            TypeModel created = null;
-            typeModel = _typeModels.GetOrAdd(type, t => created = MapType(type));
-            return created == typeModel;
-        }
-
-        static TypeModel MapType(Type type)
-        {
-            return new TypeModel(
-                NewId(),
-                type.AssemblyQualifiedName,
-                typeof(IDisposable).IsAssignableFrom(type));
-        }
-
+        
         public ActivatorModel GetActivatorModel(IInstanceActivator activator)
         {
-            if (activator == null) throw new ArgumentNullException("activator");
+            if (activator == null) throw new ArgumentNullException(nameof(activator));
 
             if (activator is ReflectionActivator)
                 return ActivatorModel.Reflection;
@@ -74,7 +53,7 @@ namespace Autofac.Analysis.Source
 
         public LifetimeModel GetLifetimeModel(IComponentLifetime lifetime)
         {
-            if (lifetime == null) throw new ArgumentNullException("lifetime");
+            if (lifetime == null) throw new ArgumentNullException(nameof(lifetime));
 
             if (lifetime is CurrentScopeLifetime)
                 return LifetimeModel.CurrentScope;
@@ -100,45 +79,39 @@ namespace Autofac.Analysis.Source
 
         public ServiceModel GetServiceModel(Service service)
         {
-            if (service == null) throw new ArgumentNullException("service");
-
-            string key = null, serviceTypeId = null;
+            if (service == null) throw new ArgumentNullException(nameof(service));
 
             var swt = service as IServiceWithType;
-            if (swt != null)
-                serviceTypeId = GetTypeId(swt.ServiceType);
-
             var ks = service as KeyedService;
-            if (ks != null)
-                key = ks.ServiceKey.ToString();
 
-            return new ServiceModel(key, serviceTypeId, service.Description);
+            return new ServiceModel(ks?.ServiceKey, swt?.ServiceType, service.Description);
         }
 
         public LifetimeScopeModel GetLifetimeScopeModel(ILifetimeScope lifetimeScope, ILifetimeScope parent = null)
         {
             string parentId = null;
             if (parent != null)
-                parentId = _idTracker.GetIdOrUnknown(parent);
+                parentId = IdTracker.GetIdOrUnknown(parent);
 
-            return new LifetimeScopeModel(_idTracker.GetOrAssignId(lifetimeScope), lifetimeScope.Tag.ToString(), parentId);
+            return new LifetimeScopeModel(IdTracker.GetOrAssignId(lifetimeScope), lifetimeScope.Tag.ToString(), parentId);
         }
 
         public ResolveOperationModel GetResolveOperationModel(IResolveOperation resolveOperation, LifetimeScopeModel lifetimeScope, StackTrace callingStackTrace)
         {
-            string locationTypeAssemblyQualifiedName = null, locationMethodName = null;
+            Type locationType = null;
+            MethodBase locationMethod = null;
             var frames = callingStackTrace.GetFrames();
             if (frames != null)
             {
                 var lastUserCode = FindResolveCall(frames);
                 if (lastUserCode != null)
                 {
-                    locationMethodName = lastUserCode.Name;
-                    locationTypeAssemblyQualifiedName = lastUserCode.DeclaringType.AssemblyQualifiedName;
+                    locationMethod = lastUserCode;
+                    locationType = lastUserCode.DeclaringType;
                 }
             }
 
-            return new ResolveOperationModel(NewId(), lifetimeScope.Id, GetThreadId(Thread.CurrentThread), locationTypeAssemblyQualifiedName, locationMethodName);
+            return new ResolveOperationModel(NewId(), lifetimeScope.Id, Thread.CurrentThread.ManagedThreadId, locationType, locationMethod);
         }
 
         static MethodBase FindResolveCall(StackFrame[] frames)
@@ -147,22 +120,29 @@ namespace Autofac.Analysis.Source
             {
                 var f = frames[i];
                 var m = f.GetMethod();
-                if (m != null)
-                {
-                    var dt = m.DeclaringType;
-                    if (dt != null)
-                    {
-                        if (i < frames.Length - 1 && dt.Assembly == typeof(ContainerBuilder).Assembly)
-                        {
-                            var ri = i + 1;
-                            while (ri < frames.Length && frames[ri].GetMethod().DeclaringType == null)
-                                ri++;
+                if (m == null)
+                    continue;
 
-                            if (ri < frames.Length)
-                                return frames[ri].GetMethod();
-                        }
-                    }
+                var dt = m.DeclaringType;
+                if (dt == null)
+                    continue;
+
+                if (i >= frames.Length - 1 || dt.Assembly != typeof(ContainerBuilder).Assembly)
+                    continue;
+
+                var ri = i + 1;
+                while (ri < frames.Length)
+                {
+                    var mdt = frames[ri].GetMethod().DeclaringType;
+                    if (mdt == null ||
+                        mdt.Assembly.FullName.StartsWith("Microsoft.Extensions.DependencyInjection"))
+                        break;
+
+                    ri++;
                 }
+
+                if (ri < frames.Length)
+                    return frames[ri].GetMethod();
             }
 
             return null;
@@ -170,40 +150,19 @@ namespace Autofac.Analysis.Source
 
         public InstanceLookupModel GetInstanceLookupModel(IInstanceLookup instanceLookup, ResolveOperationModel resolveOperation)
         {
-            return new InstanceLookupModel(NewId(), resolveOperation.Id, GetComponentId(instanceLookup.ComponentRegistration), _idTracker.GetIdOrUnknown(instanceLookup.ActivationScope), Enumerable.Empty<ParameterModel>());
+            return new InstanceLookupModel(NewId(), resolveOperation.Id, GetComponentId(instanceLookup.ComponentRegistration), IdTracker.GetIdOrUnknown(instanceLookup.ActivationScope), Enumerable.Empty<ParameterModel>());
         }
 
-        public IdTracker IdTracker { get { return _idTracker; } }
+        public IdTracker IdTracker { get; } = new IdTracker();
 
         public RegistrationSourceModel GetRegistrationSourceModel(IRegistrationSource registrationSource)
         {
-            return new RegistrationSourceModel(NewId(), registrationSource.GetType().AssemblyQualifiedName, registrationSource.ToString());
+            return new RegistrationSourceModel(NewId(), registrationSource.GetType(), registrationSource.ToString());
         }
 
         static string NewId()
         {
-            return Guid.NewGuid().ToString();
-        }
-
-        // Internal ids are uniformly strings
-        public string GetThreadId(Thread thread)
-        {
-            return thread.ManagedThreadId.ToString(CultureInfo.InvariantCulture);
-        }
-
-        public string GetTypeId(Type type)
-        {
-            TypeModel tm;
-            if (GetOrAddTypeModel(type, out tm))
-                throw new InvalidOperationException(string.Format("No model has been created for type '{0}'", type.AssemblyQualifiedName));
-            return tm.Id;
-        }
-
-        public IEnumerable<Type> GetReferencedTypes(IComponentRegistration registration)
-        {
-            yield return registration.Activator.LimitType;
-            foreach (var st in registration.Services.OfType<IServiceWithType>())
-                yield return st.ServiceType;
+            return Guid.NewGuid().ToString("n");
         }
     }
 }

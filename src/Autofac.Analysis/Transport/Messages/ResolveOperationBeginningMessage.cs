@@ -6,17 +6,11 @@ namespace Autofac.Analysis.Transport.Messages
     [Serializable]
     public class ResolveOperationBeginningMessage
     {
-        readonly ResolveOperationModel _resolveOperation;
-
         public ResolveOperationBeginningMessage(ResolveOperationModel resolveOperation)
         {
-            if (resolveOperation == null) throw new ArgumentNullException("resolveOperation");
-            _resolveOperation = resolveOperation;
+            ResolveOperation = resolveOperation ?? throw new ArgumentNullException(nameof(resolveOperation));
         }
 
-        public ResolveOperationModel ResolveOperation
-        {
-            get { return _resolveOperation; }
-        }
+        public ResolveOperationModel ResolveOperation { get; }
     }
 }

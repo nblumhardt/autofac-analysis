@@ -6,16 +6,11 @@ namespace Autofac.Analysis.Transport.Messages
     [Serializable]
     public class InstanceLookupBeginningMessage
     {
-        readonly InstanceLookupModel _instanceLookup;
-
         public InstanceLookupBeginningMessage(InstanceLookupModel instanceLookup)
         {
-            _instanceLookup = instanceLookup;
+            InstanceLookup = instanceLookup;
         }
 
-        public InstanceLookupModel InstanceLookup
-        {
-            get { return _instanceLookup; }
-        }
+        public InstanceLookupModel InstanceLookup { get; }
     }
 }

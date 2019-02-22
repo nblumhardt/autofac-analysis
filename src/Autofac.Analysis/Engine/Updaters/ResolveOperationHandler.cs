@@ -17,36 +17,27 @@ namespace Autofac.Analysis.Engine.Updaters
             IActiveItemRepository<LifetimeScope> lifetimeScopes,
             IActiveItemRepository<Thread> threads)
         {
-            if (resolveOperations == null) throw new ArgumentNullException("resolveOperations");
-            if (lifetimeScopes == null) throw new ArgumentNullException("lifetimeScopes");
-            if (threads == null) throw new ArgumentNullException("threads");
-            _resolveOperations = resolveOperations;
-            _lifetimeScopes = lifetimeScopes;
-            _threads = threads;
+            _resolveOperations = resolveOperations ?? throw new ArgumentNullException(nameof(resolveOperations));
+            _lifetimeScopes = lifetimeScopes ?? throw new ArgumentNullException(nameof(lifetimeScopes));
+            _threads = threads ?? throw new ArgumentNullException(nameof(threads));
         }
 
         public void UpdateFrom(ResolveOperationBeginningMessage message)
         {
-            LifetimeScope lifetimeScope;
-            if (!_lifetimeScopes.TryGetItem(message.ResolveOperation.LifetimeScopeId, out lifetimeScope))
+            if (!_lifetimeScopes.TryGetItem(message.ResolveOperation.LifetimeScopeId, out var lifetimeScope))
                 throw new InvalidOperationException("Resolve operation beginning in an unknown lifetime scope.");
 
-            Thread thread;
-            if (!_threads.TryGetItem(message.ResolveOperation.ThreadId, out thread))
+            if (!_threads.TryGetItem(message.ResolveOperation.ManagedThreadId.ToString(), out var thread))
             {
-                thread = new Thread(message.ResolveOperation.ThreadId);
+                thread = new Thread(message.ResolveOperation.ManagedThreadId.ToString());
                 _threads.Add(thread);
             }
 
             ResolveOperation parent = null;
             if (thread.ResolveOperationStack.Count != 0)
                 parent = thread.ResolveOperationStack.Peek();
-
-            MethodIdentifier callingMethod = null;
-            if (message.ResolveOperation.CallingMethodName != null)
-                callingMethod = new MethodIdentifier(message.ResolveOperation.CallingMethodName, TypeIdentifier.Parse(message.ResolveOperation.CallingTypeAssemblyQualifiedName));
-
-            var resolveOperation = new ResolveOperation(message.ResolveOperation.Id, lifetimeScope, thread, parent, callingMethod);
+            
+            var resolveOperation = new ResolveOperation(message.ResolveOperation.Id, lifetimeScope, thread, parent, message.ResolveOperation.CallingType, message.ResolveOperation.CallingMethod);
             if (parent != null)
                 parent.SubOperations.Add(resolveOperation);
 
@@ -56,8 +47,7 @@ namespace Autofac.Analysis.Engine.Updaters
 
         public void UpdateFrom(ResolveOperationEndingMessage message)
         {
-            ResolveOperation resolveOperation;
-            if (!_resolveOperations.TryGetItem(message.ResolveOperationId, out resolveOperation))
+            if (!_resolveOperations.TryGetItem(message.ResolveOperationId, out var resolveOperation))
                 throw new InvalidOperationException("Ending resolve operation is unknown.");
 
             resolveOperation.Thread.ResolveOperationStack.Pop();

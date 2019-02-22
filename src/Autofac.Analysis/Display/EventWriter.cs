@@ -8,20 +8,23 @@ using Serilog;
 namespace Autofac.Analysis.Display
 {
     sealed class EventWriter :
+        IApplicationEventHandler<ProfilerConnectedEvent>,
         IApplicationEventHandler<MessageEvent>,
         IApplicationEventHandler<ItemCreatedEvent<ResolveOperation>>,
         IApplicationEventHandler<ItemCompletedEvent<ResolveOperation>>,
+        IApplicationEventHandler<ItemCreatedEvent<Component>>,
+        IApplicationEventHandler<ItemCreatedEvent<RegistrationSource>>,
         IDisposable,
         IStartable
     {
         readonly IApplicationEventBus _eventBus;
         readonly ILogger _logger;
 
-        public EventWriter(IApplicationEventBus eventBus)
+        public EventWriter(IApplicationEventBus eventBus, ILogger logger)
         {
-            if (eventBus == null) throw new ArgumentNullException("eventBus");
-            _eventBus = eventBus;
-            _logger = Log.ForContext<EventWriter>();
+            if (logger == null) throw new ArgumentNullException(nameof(logger));
+            _eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
+            _logger = logger.ForContext<EventWriter>();
         }
 
         public void Start()
@@ -31,7 +34,9 @@ namespace Autofac.Analysis.Display
 
         public void Handle(MessageEvent applicationEvent)
         {
+#pragma warning disable Serilog004 // Constant MessageTemplate verifier
             _logger.Write(applicationEvent.Level, applicationEvent.MessageTemplate, applicationEvent.Args);
+#pragma warning restore Serilog004 // Constant MessageTemplate verifier
         }
 
         public void Dispose()
@@ -43,17 +48,12 @@ namespace Autofac.Analysis.Display
         {
             if (applicationEvent.Item.Parent != null)
             {
-                _logger
-                    .ForContext("ResolveOperationId", applicationEvent.Item.Id)
-                    .ForContext("ParentResolveOperationId", applicationEvent.Item.Parent.Id)
-                    .Information("Resolve operation {ResolveOperationShortId} started as child of {ParentResolveOperationShortId}",
-                        IdDisplay.MakeShortId(applicationEvent.Item.Id), IdDisplay.MakeShortId(applicationEvent.Item.Parent.Id));
+                _logger.Information("Resolve operation {ResolveOperationId} started as child of {ParentResolveOperationId}",
+                        applicationEvent.Item.Id, applicationEvent.Item.Parent.Id);
             }
             else
             {
-                _logger
-                    .ForContext("ResolveOperationId", applicationEvent.Item.Id)
-                    .Information("Resolve operation {ResolveOperationShortId} started from {CallingMethod}", IdDisplay.MakeShortId(applicationEvent.Item.Id), applicationEvent.Item.CallingMethod.DisplayName);
+                _logger.Information("Resolve operation {ResolveOperationId} started from {CallingMethod} on {CallingType}", applicationEvent.Item.Id, applicationEvent.Item.CallingMethod, applicationEvent.Item.CallingType);
             }
         }
 
@@ -65,13 +65,27 @@ namespace Autofac.Analysis.Display
             var graph = ToObjectGraph(applicationEvent.Item.RootInstanceLookup);
 
             _logger
-                .ForContext("ResolveOperationId", applicationEvent.Item.Id)
-                .Information("Resolve operation {ResolveOperationShortId} returned {@Graph}", IdDisplay.MakeShortId(applicationEvent.Item.Id), graph);
+                .ForContext("Graph", graph, destructureObjects: true)
+                .Information("Resolve operation {ResolveOperationId} returned an instance from {ComponentId}", applicationEvent.Item.Id, applicationEvent.Item.RootInstanceLookup.Component.Id);
+        }
+
+        public void Handle(ItemCreatedEvent<Component> applicationEvent)
+        {
+            _logger
+                .ForContext("Component", applicationEvent.Item, destructureObjects: true)
+                .Information("Component {ComponentId}, {Description}, was registered", applicationEvent.Item.Id, applicationEvent.Item.Description);
+        }
+
+        public void Handle(ItemCreatedEvent<RegistrationSource> applicationEvent)
+        {
+            _logger
+                .ForContext("RegistrationSource", applicationEvent.Item, destructureObjects: true)
+                .Information("Registration source {RegistrationSourceId}, {Description}, was added", applicationEvent.Item.Id, applicationEvent.Item.Description);
         }
 
         static object ToObjectGraph(InstanceLookup instanceLookup)
         {
-            if (instanceLookup == null) throw new ArgumentNullException("instanceLookup");
+            if (instanceLookup == null) throw new ArgumentNullException(nameof(instanceLookup));
 
             // Just hacking things to keep clutter down, needs cleaning up
 
@@ -81,7 +95,7 @@ namespace Autofac.Analysis.Display
                 {
                     return new
                     {
-                        Component = instanceLookup.Component.LimitType.Identity.DisplayName,
+                        Component = instanceLookup.Component.LimitType,
                         Reused = instanceLookup.SharedInstanceReused,
                         Scope = instanceLookup.ActivationScope.Description
                     };
@@ -89,7 +103,7 @@ namespace Autofac.Analysis.Display
 
                 return new
                 {
-                    Component = instanceLookup.Component.LimitType.Identity.DisplayName,
+                    Component = instanceLookup.Component.LimitType,
                     Reused = instanceLookup.SharedInstanceReused,
                     Scope = instanceLookup.ActivationScope.Description,
                     Dependencies = instanceLookup.DependencyLookups.Select(ToObjectGraph).ToArray()
@@ -100,17 +114,22 @@ namespace Autofac.Analysis.Display
             {
                 return new
                 {
-                    Component = instanceLookup.Component.LimitType.Identity.DisplayName,
+                    Component = instanceLookup.Component.LimitType,
                     Scope = instanceLookup.ActivationScope.Description
                 };
             }
 
             return new
             {
-                Component = instanceLookup.Component.LimitType.Identity.DisplayName,
+                Component = instanceLookup.Component.LimitType,
                 Scope = instanceLookup.ActivationScope.Description,
                 Dependencies = instanceLookup.DependencyLookups.Select(ToObjectGraph).ToArray()
             };
+        }
+
+        public void Handle(ProfilerConnectedEvent applicationEvent)
+        {
+            _logger.Information("Autofac analysis module connected in {Executable} ({ProcessId})", applicationEvent.Name, applicationEvent.Id);
         }
     }
 }

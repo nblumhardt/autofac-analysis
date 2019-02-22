@@ -13,8 +13,7 @@ namespace Autofac.Analysis.Engine.Analytics.LifetimeDisposalOrder
 
         public OutOfOrderDisposalDetector(IApplicationEventQueue applicationEventQueue)
         {
-            if (applicationEventQueue == null) throw new ArgumentNullException("applicationEventQueue");
-            _applicationEventQueue = applicationEventQueue;
+            _applicationEventQueue = applicationEventQueue ?? throw new ArgumentNullException(nameof(applicationEventQueue));
         }
 
         public void Handle(ItemCompletedEvent<LifetimeScope> applicationEvent)
@@ -28,7 +27,11 @@ namespace Autofac.Analysis.Engine.Analytics.LifetimeDisposalOrder
                 _descriptionsOfParentsWithWarningsIssued.Add(lifetimeScope.Description);
                 var childScopeDescriptions = lifetimeScope.ActiveChildren.Select(ls => ls.Description).ToArray();
                 var messageEvent = new MessageEvent(LogEventLevel.Error, 
-                    "A {LifetimeScopeDescription} lifetime scope, {LifetimeScopeId}, was disposed before its active children (including {ChildScopeDescriptions}).", lifetimeScope.Description, lifetimeScope.Id, childScopeDescriptions);
+                    "{AnalysisCode} A {LifetimeScopeDescription} lifetime scope, {LifetimeScopeId}, was disposed before its active children (including {ChildScopeDescriptions}).",
+                    AnalysisCodes.LifetimeScopeDisposalOrdering,
+                    lifetimeScope.Description,
+                    lifetimeScope.Id,
+                    childScopeDescriptions);
                 _applicationEventQueue.Enqueue(messageEvent);
             }
         }

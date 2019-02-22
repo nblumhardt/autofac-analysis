@@ -4,43 +4,28 @@ namespace Autofac.Analysis.Engine.Application
 {
     public class Service
     {
-        readonly string _description;
-        readonly TypeData _serviceType;
-        readonly string _key;
-        
-        public Service(string description, TypeData serviceType = null, string key = null)
+        public Service(string description, Type serviceType = null, object key = null)
         {
-            if (description == null) throw new ArgumentNullException("description");
-            _serviceType = serviceType;
-            _key = key;
+            if (description == null) throw new ArgumentNullException(nameof(description));
+            ServiceType = serviceType;
+            Key = key;
 
             if (serviceType == null)
-                _description = description;
+                Description = description;
             else
             {
-                _description = serviceType.Identity.DisplayName;
+                Description = serviceType.ToString();
                 if (key != null)
                 {
-                    _description += " (" + key + ")";
+                    Description += " (" + key + ")";
                 }
             }
         }
 
-        public bool IsTypedService { get { return _key == null && _serviceType != null; } }
+        public object Key { get; }
 
-        public string Key
-        {
-            get { return _key; }
-        }
+        public string Description { get; }
 
-        public string Description
-        {
-            get { return _description; }
-        }
-
-        public TypeData ServiceType
-        {
-            get { return _serviceType; }
-        }
+        public Type ServiceType { get; }
     }
 }

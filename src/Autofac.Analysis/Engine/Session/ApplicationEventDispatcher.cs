@@ -18,23 +18,21 @@ namespace Autofac.Analysis.Engine.Session
 
         public ApplicationEventDispatcher(IComponentContext componentContext)
         {
-            if (componentContext == null) throw new ArgumentNullException("componentContext");
-            _componentContext = componentContext;
+            _componentContext = componentContext ?? throw new ArgumentNullException(nameof(componentContext));
         }
 
         public void Enqueue(object applicationEvent)
         {
-            if (applicationEvent == null) throw new ArgumentNullException("applicationEvent");
+            if (applicationEvent == null) throw new ArgumentNullException(nameof(applicationEvent));
             _events.Enqueue(applicationEvent);
         }
 
         public void DispatchApplicationEvents()
         {
-            object applicationEvent;
-            while (_events.TryDequeue(out applicationEvent))
+            while (_events.TryDequeue(out var applicationEvent))
             {
                 var dispatchMethod = DispatchEventOfTypeMethod.MakeGenericMethod(applicationEvent.GetType());
-                dispatchMethod.Invoke(this, new[] {applicationEvent});
+                dispatchMethod.Invoke(this, new[] { applicationEvent });
             }
         }
 
@@ -51,13 +49,13 @@ namespace Autofac.Analysis.Engine.Session
 
         public void Subscribe(object subscriber)
         {
-            if (subscriber == null) throw new ArgumentNullException("subscriber");
+            if (subscriber == null) throw new ArgumentNullException(nameof(subscriber));
             _additionalSubscribers.Add(subscriber);
         }
 
         public void Unsubscribe(object subscriber)
         {
-            if (subscriber == null) throw new ArgumentNullException("subscriber");
+            if (subscriber == null) throw new ArgumentNullException(nameof(subscriber));
             _additionalSubscribers.Remove(subscriber);
         }
     }
