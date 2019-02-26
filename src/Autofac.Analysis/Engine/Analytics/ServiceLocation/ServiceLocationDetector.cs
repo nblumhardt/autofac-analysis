@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Autofac.Analysis.Engine.Application;
-using Autofac.Analysis.Transport.Model;
+using Autofac.Features.Metadata;
 using Autofac.Features.OwnedInstances;
 using Serilog.Events;
 
@@ -11,6 +12,14 @@ namespace Autofac.Analysis.Engine.Analytics.ServiceLocation
     {
         readonly IApplicationEventQueue _applicationEventQueue;
         readonly HashSet<string> _seen = new HashSet<string>(), _warningsIssued = new HashSet<string>();
+
+        readonly Type[] _builtInAdapterTypes =
+        {
+            typeof(Lazy<>),
+            typeof(Lazy<,>),
+            typeof(Meta<>),
+            typeof(Owned<>)
+        };
 
         public ServiceLocationDetector(IApplicationEventQueue applicationEventQueue)
         {
@@ -28,10 +37,12 @@ namespace Autofac.Analysis.Engine.Analytics.ServiceLocation
                 return;
 
             var component = instanceLookup.Component;
-            if (component.LimitType.IsConstructedGenericType && component.LimitType.GetGenericTypeDefinition() == typeof(Owned<>))
+            if (component.Id != component.TargetComponentId &&
+                component.LimitType.IsConstructedGenericType &&
+                _builtInAdapterTypes.Contains(component.LimitType.GetGenericTypeDefinition()))
                 return;
 
-            if (component.Sharing == SharingModel.Shared)
+            if (!component.IsTracked && component.TargetComponentId != component.Id)
                 return;
 
             if (_warningsIssued.Contains(component.Id))
