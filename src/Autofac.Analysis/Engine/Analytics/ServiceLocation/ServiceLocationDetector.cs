@@ -37,8 +37,7 @@ namespace Autofac.Analysis.Engine.Analytics.ServiceLocation
                 return;
 
             var component = instanceLookup.Component;
-            if (component.Id != component.TargetComponentId &&
-                component.LimitType.IsConstructedGenericType &&
+            if (component.LimitType.IsConstructedGenericType &&
                 _builtInAdapterTypes.Contains(component.LimitType.GetGenericTypeDefinition()))
                 return;
 
