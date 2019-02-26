@@ -116,26 +116,19 @@ namespace Autofac.Analysis.Source
 
         static MethodBase FindResolveCall(StackFrame[] frames)
         {
+            // Nested resolve calls aren't taken into account, here.
+
             for (var i = frames.Length - 1; i >= 0; --i)
             {
                 var f = frames[i];
-                var m = f.GetMethod();
-                if (m == null)
-                    continue;
-
-                var dt = m.DeclaringType;
-                if (dt == null)
-                    continue;
-
-                if (i >= frames.Length - 1 || dt.Assembly != typeof(ContainerBuilder).Assembly)
+                if (!IsServiceLocatorEntrypoint(f))
                     continue;
 
                 var ri = i + 1;
                 while (ri < frames.Length)
                 {
                     var mdt = frames[ri].GetMethod().DeclaringType;
-                    if (mdt == null ||
-                        mdt.Assembly.FullName.StartsWith("Microsoft.Extensions.DependencyInjection"))
+                    if (mdt != null)
                         break;
 
                     ri++;
@@ -146,6 +139,23 @@ namespace Autofac.Analysis.Source
             }
 
             return null;
+        }
+
+        static bool IsServiceLocatorEntrypoint(StackFrame f)
+        {
+            var m = f.GetMethod();
+            if (m == null)
+                return false;
+
+            var dt = m.DeclaringType;
+            if (dt == null)
+                return false;
+
+            // Currently we assume that any method in either of these assemblies is a
+            // service location entrypoint.
+            return dt.Assembly == typeof(ContainerBuilder).Assembly ||
+                   dt.Assembly.FullName.StartsWith("Microsoft.Extensions.DependencyInjection") ||
+                   dt.Assembly.FullName.StartsWith("Autofac.Extensions.DependencyInjection");
         }
 
         public InstanceLookupModel GetInstanceLookupModel(IInstanceLookup instanceLookup, ResolveOperationModel resolveOperation)

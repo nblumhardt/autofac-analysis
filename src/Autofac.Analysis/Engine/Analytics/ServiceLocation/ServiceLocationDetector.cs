@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Autofac.Analysis.Engine.Application;
+using Autofac.Analysis.Transport.Model;
 using Autofac.Features.Metadata;
 using Autofac.Features.OwnedInstances;
 using Serilog.Events;
@@ -41,7 +42,7 @@ namespace Autofac.Analysis.Engine.Analytics.ServiceLocation
                 _builtInAdapterTypes.Contains(component.LimitType.GetGenericTypeDefinition()))
                 return;
 
-            if (!component.IsTracked && component.TargetComponentId != component.Id)
+            if (component.Sharing == SharingModel.Shared)
                 return;
 
             if (_warningsIssued.Contains(component.Id))
