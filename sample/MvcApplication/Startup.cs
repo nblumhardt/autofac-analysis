@@ -41,6 +41,7 @@ namespace MvcApplication
             builder.RegisterModule(new AnalysisModule(Log.Logger));
 
             builder.RegisterType<DBContext>();
+            builder.RegisterType<ShoppingCartService>().SingleInstance();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)

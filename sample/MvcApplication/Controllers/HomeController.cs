@@ -7,15 +7,16 @@ namespace MvcApplication.Controllers
 {
     public class HomeController : Controller
     {
-        readonly DBContext _dbContext;
+        readonly ShoppingCartService _shoppingCartService;
 
-        public HomeController(DBContext dbContext)
+        public HomeController(ShoppingCartService shoppingCartService)
         {
-            _dbContext = dbContext;
+            _shoppingCartService = shoppingCartService;
         }
 
         public IActionResult Index()
         {
+            _shoppingCartService.AddItem("toothpaste", 100);
             return View();
         }
 
